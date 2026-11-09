@@ -2,11 +2,12 @@
 // 定位方式（at）：
 //   { dir:[x,y,z], side, sec }  自动：在该部件网格上，从 dir 方向（机体系）射向部件找表面点；side 选左(+1)/右(-1)侧那一组网格；sec 限定分段
 //   { body:[s,y,z], follow }    显式：机体系坐标；follow 为跟随的组（分段 id，如 's41'，或 'fairing'；缺省跟随机体）
-// prio：1 = 常显；2 = 镜头靠近（< 32 m）或“全部”模式才显示。off：标签相对锚点的屏幕偏移（像素）
+// prio：1 = 常显；2 = 镜头靠近（< near，缺省 32 m）或“全部”模式才显示。off：标签相对锚点的屏幕偏移（像素）
 import * as THREE from 'three';
 import { point, tAtHeight, FUS } from '../model/fuselage.js';
 import { FRAME0, WINDOW, DOORS, CARGO_DOORS, PAX_DOOR } from '../model/layout.js';
 import { CABIN_FLOOR, CARGO_FLOOR } from '../model/interior.js';
+import { FD_SPOTS } from './cockpit-kb.js';
 
 /** 机身表面点：站位 s、离地高度 y（机体系）、侧别 */
 function skin(s, y, side = 1, out = 0.02) {
@@ -119,7 +120,10 @@ export const HOTSPOTS = [
   { part: 'apu', set: 'systems', prio: 2, at: { body: [58.55, 5.8, 0], follow: 'tailcone' }, off: [30, -56] },
   { part: 'asg', set: 'systems', prio: 2, at: { body: [57.15, 5.33, 0.26], follow: 'tailcone' }, off: [-50, 50] },
   { part: 'ram', set: 'systems', prio: 2, at: { body: [35.25, 2.5, -2.62] }, off: [40, 56] },
+
+  // ———————— 驾驶舱内：分仪表标注（镜头在驾驶舱内时启用） ————————
+  ...FD_SPOTS,
 ];
 
 /** 标注集合 → 中文名 */
-export const SPOT_SETS = { exterior: '外观', structure: '结构', cabin: '客舱', systems: '系统' };
+export const SPOT_SETS = { exterior: '外观', structure: '结构', cabin: '客舱', systems: '系统', cockpit: '驾驶舱' };

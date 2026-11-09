@@ -52,7 +52,7 @@
 //                                https://modstore.aero/modification/saint-gobain-performance-plastics-corp-installation-of-norton-radome-b787-dreamliner-2
 //   波音接收 Spirit 威奇托、塔尔萨等业务：https://www.okcommerce.gov/boeing-completes-acquisition-of-spirit-aerosystems/
 
-export const CATEGORIES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '内部结构', cabin: '客舱与货舱', systems: '系统与舱门' };
+export const CATEGORIES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '内部结构', cabin: '客舱与货舱', systems: '系统与舱门', cockpit: '驾驶舱' };
 
 export const PARTS = {
   // ───────────── 机身蒙皮分段 ─────────────

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import * as KB from '../data/parts.js';
 import { HOTSPOTS } from '../data/hotspots.js';
 import { SYS_PARTS, SYSTEMS_LEGEND } from '../data/systems-kb.js';
+import { FD_PARTS, FD_SPOTS, FD_VIEWS, FD_AFT } from '../data/cockpit-kb.js';
 import { CUT } from '../render/materials.js';
 import { TOUR, TOUR_DEFAULTS } from '../data/tour.js';
 import { h, fill } from './dom.js';
@@ -40,7 +41,8 @@ const MODES = [
 
 export function initUI(app) {
   const A = app.aircraft;
-  const PARTS = { ...SYS_PARTS, ...(KB.PARTS || {}) }; // 系统条目作补充，主知识库优先
+  const PARTS = { ...SYS_PARTS, ...(KB.PARTS || {}), ...FD_PARTS }; // 系统条目作补充，主知识库优先；驾驶舱分仪表条目单列
+  const FD_SPOT_OF = Object.fromEntries(FD_SPOTS.map((q) => [q.part, q]));
   const ui = document.getElementById('ui');
   const display = new Display(app);
   const picker = new Picker(app, display);
@@ -73,7 +75,18 @@ export function initUI(app) {
     panel.showOverview();
     if (display.state.isolate?.key === 'partId') display.set({ isolate: null });
   }
+  // 驾驶舱仪表：飞到对应眼位（机长 / 副驾驶 / 中央 / 观察员）并转向该仪表；舱外选中风挡等有网格的部件时仍按舱外方式聚焦
+  function focusCockpit(spot) {
+    const eye = bodyToWorld(app, ...(FD_VIEWS[spot.view] || FD_VIEWS.O));
+    const at = bodyToWorld(app, ...spot.at.body);
+    const look = eye.clone().addScaledVector(at.sub(eye).normalize(), 0.35);
+    const far = !state.inside;
+    rig.fly(eye, look, { inside: true, dur: far ? 2.0 : 1.1 });
+    if (far) dock.markPreset('cockpit');
+  }
   function focusPart(id) {
+    const fs = FD_SPOT_OF[id];
+    if (fs && (state.inside || !meshesOf(id).length)) { focusCockpit(fs); return; }
     const meshes = meshesOf(id).filter((m) => picker.visible(m));
     const box = new THREE.Box3();
     if (meshes.length) {
@@ -363,12 +376,20 @@ export function initUI(app) {
     if (gx === 0 && gy === 0 && Math.abs(vo.x) < 0.5 && Math.abs(vo.y) < 0.5) { vo.x = vo.y = 0; if (cam.view?.enabled) cam.clearViewOffset(); return; }
     cam.setViewOffset(W, H, vo.x, vo.y, W, H);
   };
+  // 舱内标注集随镜头位置切换：驾驶舱后隔板之前用分仪表标注，之后用客舱标注
+  const _cam = new THREE.Vector3();
+  const insideSetTick = () => {
+    if (!state.inside) return;
+    const want = A.ac.worldToLocal(_cam.copy(app.camera.position)).x < FD_AFT ? 'cockpit' : 'cabin';
+    if (labels.set !== want) labels.setSet(want);
+  };
   app.tickers.push((dt) => {
     viewOffsetTick(dt);
     fc.tick(dt);
     rig.tick(dt);
     amb.tick(dt);
     display.tick(dt);
+    insideSetTick();
     labels.tick(dt);
     dims.tick();
     hoverTick();

@@ -198,6 +198,7 @@ input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border: 0; bord
 .lbl[data-cat=tail] .dot { background: #b48cff; } .lbl[data-cat=engine] .dot { background: #ff9f43; }
 .lbl[data-cat=gear] .dot { background: #ff6b8b; } .lbl[data-cat=structure] .dot { background: #5fa8ff; }
 .lbl[data-cat=cabin] .dot { background: #ffd166; } .lbl[data-cat=systems] .dot { background: #3fe0c5; }
+.lbl[data-cat=cockpit] .dot { background: #f5a3d8; }
 body.touring .lbl:not(.sel) { opacity: .75; }
 
 /* —— 悬停提示 —— */

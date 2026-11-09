@@ -7,9 +7,9 @@ import { diagramFor } from './diagrams.js';
 
 const CAT_COLORS = {
   fuselage: '#4cc3ff', wing: '#7ee081', tail: '#b48cff', engine: '#ff9f43', gear: '#ff6b8b',
-  structure: '#5fa8ff', cabin: '#ffd166', systems: '#3fe0c5',
+  structure: '#5fa8ff', cabin: '#ffd166', systems: '#3fe0c5', cockpit: '#f5a3d8',
 };
-const CAT_NAMES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '结构', cabin: '客舱', systems: '机载系统' };
+const CAT_NAMES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '结构', cabin: '客舱', systems: '机载系统', cockpit: '驾驶舱' };
 export { CAT_COLORS };
 
 export class Panel {

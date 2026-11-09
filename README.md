@@ -13,6 +13,10 @@ python3 -m http.server 8000
 # 打开 http://localhost:8000
 ```
 
+## 发布
+
+推送到 `main` 后，GitHub Actions（`.github/workflows/pages.yml`）会自动运行 `tools/build.mjs`，把全部代码打包成单个 HTML 发布到 GitHub Pages，约 1～2 分钟后线上更新。
+
 ## 打包为单个离线 HTML
 
 ```bash

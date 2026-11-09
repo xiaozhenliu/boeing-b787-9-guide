@@ -5,6 +5,7 @@
 // 操纵台前端斜置第 5 块（下中央屏）；787 标配双 HUD：合像玻璃在眼前约 0.3 m，投影组件在头顶；
 // 波音保留柱式驾驶盘（非侧杆）。受风挡高度约束，驾驶舱地板比客舱低约 0.31 m，门内设两级台阶。
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { point, normal, tAtHeight, FUS } from './fuselage.js';
 import { tAtLateralUpper, COCKPIT, windowTrimGeometry } from './cockpit.js';
 import { capPolygon, grid, cylinderBetween, boxBetween } from '../geom/build.js';
@@ -54,6 +55,14 @@ function obox(c, x, y, sx, sy, sz) {
   return g;
 }
 const abox = (cx, cy, cz, sx, sy, sz) => new THREE.BoxGeometry(sx, sy, sz).translate(cx, cy, cz);
+/** 圆角定向盒（软包、座椅等）：同 obox，棱边倒圆半径 r */
+function rbox(c, x, y, sx, sy, sz, r, seg = 2) {
+  const z = x.clone().cross(y).normalize();
+  const g = new RoundedBoxGeometry(sx, sy, sz, seg, r);
+  g.applyMatrix4(new THREE.Matrix4().makeBasis(x, y, z).setPosition(c));
+  return g;
+}
+const arbox = (cx, cy, cz, sx, sy, sz, r, seg = 2) => rbox(V(cx, cy, cz), V(1, 0, 0), UP, sx, sy, sz, r, seg);
 /** 侧面轮廓（[s, y] 点列）沿 z 拉伸 */
 function prismZ(profile, z0, z1) {
   const g = new THREE.ExtrudeGeometry(new THREE.Shape(profile.map(([s, y]) => new THREE.Vector2(s, y))), { depth: z1 - z0, bevelEnabled: false });
@@ -244,12 +253,27 @@ export function buildFlightDeck() {
   for (const sg of [1, -1]) {
     const z = sg * EYE_Z;
     add('fdKnob', abox(2.95, F + 0.012, z + 0.13, 0.9, 0.024, 0.04), abox(2.95, F + 0.012, z - 0.13, 0.9, 0.024, 0.04)); // 座椅滑轨
-    add('fdSeat', abox(2.96, F + 0.18, z, 0.3, 0.32, 0.3)); // 基座（升降机构）
-    add('fdSeat', abox(2.87, F + 0.41, z, 0.5, 0.14, 0.5)); // 坐垫：面高 0.48 m
-    add('fdSeat', boxBetween(V(3.1, F + 0.5, z), V(3.25, F + 1.2, z), 0.48, 0.12)); // 靠背后仰 12°
-    add('fdSeat', boxBetween(V(3.235, F + 1.15, z), V(3.265, F + 1.36, z), 0.3, 0.13)); // 头枕
+    add('fdSeat', arbox(2.96, F + 0.18, z, 0.3, 0.32, 0.3, 0.03, 1)); // 基座（升降机构）
+    add('fdKnob', arbox(2.885, F + 0.35, z, 0.5, 0.04, 0.48, 0.012, 1)); // 座盆骨架
+    add('fdSeat', arbox(2.875, F + 0.42, z, 0.48, 0.1, 0.44, 0.04)); // 坐垫：面高约 0.47 m
+    for (const dz of [0.2, -0.2]) add('fdSeat', arbox(2.86, F + 0.465, z + dz, 0.44, 0.06, 0.07, 0.028)); // 坐垫侧翼
+    // 靠背后仰 12°：bY 沿靠背向上，bX 指向椅背后方（前面 = −bX）
+    const bY = V(0.15, 0.7, 0).normalize(), bX = V(bY.y, -bY.x, 0), bC = V(3.175, F + 0.85, z);
+    const onBack = (dx, dy, dz = 0) => bC.clone().addScaledVector(bX, dx).addScaledVector(bY, dy).add(V(0, 0, dz));
+    add('fdSeat', rbox(bC, bX, bY, 0.11, 0.72, 0.46, 0.045));
+    for (const dz of [0.2, -0.2]) add('fdSeat', rbox(onBack(-0.065, -0.02, dz), bX, bY, 0.07, 0.56, 0.075, 0.03)); // 靠背侧翼
+    add('fdSeat', rbox(onBack(-0.06, -0.17), bX, bY, 0.03, 0.18, 0.3, 0.014)); // 腰托
+    add('fdSeat', rbox(onBack(-0.01, 0.475), bX, bY, 0.1, 0.19, 0.28, 0.045)); // 头枕
+    for (const dz of [0.08, -0.08]) add('fdKnob', boxBetween(onBack(0, 0.33, dz), onBack(0, 0.4, dz), 0.012, 0.012)); // 头枕立柱
+    // 五点式安全带：两条肩带顺靠背前面垂下；两条腰带与胯带汇到坐垫前部的旋转锁扣
+    for (const dz of [0.08, -0.08]) add('fdKnob', rbox(onBack(-0.058, 0.14, dz), bX, bY, 0.006, 0.4, 0.045, 0.002, 1));
+    const strap = (a, b) => { const d = b.clone().sub(a), len = d.length(); return rbox(a.clone().add(b).multiplyScalar(0.5), d.normalize(), UP, len, 0.006, 0.045, 0.002, 1); };
+    const bk = V(2.76, F + 0.477, z);
+    for (const dz of [0.19, -0.19]) add('fdKnob', strap(V(3.06, F + 0.477, z + dz), bk.clone().setZ(z + Math.sign(dz) * 0.035)));
+    add('fdKnob', strap(V(2.64, F + 0.477, z), bk));
+    add('fdLever', cylinderBetween(bk, bk.clone().setY(bk.y + 0.012), 0.035, 0.035, 20)); // 旋转锁扣
     for (const dz of [0.27, -0.27]) {
-      add('fdSeat', abox(2.96, F + 0.7, z + dz, 0.3, 0.045, 0.055), abox(3.08, F + 0.585, z + dz, 0.05, 0.2, 0.04)); // 扶手
+      add('fdSeat', arbox(2.95, F + 0.7, z + dz, 0.32, 0.05, 0.06, 0.022), arbox(3.09, F + 0.6, z + dz, 0.05, 0.2, 0.04, 0.012, 1)); // 扶手
     }
     // 侧操纵台：顶面高 0.66 m；前端为前轮转弯手轮（舵柄），后部为氧气面罩盒
     const yt = F + 0.66;
@@ -325,8 +349,12 @@ export function buildFlightDeck() {
   add('fdKnob', abox(BH - 0.04, CF + 1.02, -DW + 0.09, 0.03, 0.03, 0.14));
   add('fdKnob', cylinderBetween(V(BH - 0.026, CF + 1.55, 0), V(BH - 0.034, CF + 1.55, 0), 0.012, 0.012, 12)); // 门镜
   // 观察员座椅（中央）与左后衣帽柜
-  add('fdSeat', abox(3.8, F + 0.21, 0, 0.26, 0.42, 0.3), abox(3.79, F + 0.475, 0, 0.42, 0.11, 0.48));
-  add('fdSeat', boxBetween(V(4.0, F + 0.53, 0), V(4.06, F + 1.16, 0), 0.46, 0.1));
+  add('fdSeat', arbox(3.8, F + 0.21, 0, 0.26, 0.42, 0.3, 0.025, 1), arbox(3.79, F + 0.475, 0, 0.42, 0.1, 0.46, 0.04));
+  {
+    const oY = V(0.06, 0.63, 0).normalize(), oX = V(oY.y, -oY.x, 0), oC = V(4.03, F + 0.845, 0);
+    add('fdSeat', rbox(oC, oX, oY, 0.1, 0.62, 0.46, 0.04));
+    add('fdSeat', rbox(oC.clone().addScaledVector(oY, 0.4), oX, oY, 0.09, 0.17, 0.26, 0.04)); // 头枕
+  }
   add('fdLining', ...wallBox(3.9, BH - 0.01, 1.25, F, F + 1.56, 1));
   return L;
 }

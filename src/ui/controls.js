@@ -10,6 +10,7 @@ export const FLAP_DETENTS = [
   { id: 'UP', flap: 0, slat: 0, krueger: 0 },
   { id: '1', flap: 0, slat: 17, krueger: 95 },
   { id: '5', flap: 5, slat: 17, krueger: 95 },
+  { id: '10', flap: 10, slat: 17, krueger: 95 },
   { id: '15', flap: 15, slat: 17, krueger: 95 },
   { id: '17', flap: 17, slat: 17, krueger: 95 },
   { id: '18', flap: 18, slat: 17, krueger: 95 },

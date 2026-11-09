@@ -156,6 +156,9 @@ function pfd(g, w, h) {
   const hcy = h + 64, rh = 120, hdg = 285;
   g.save(); clipRect(g, 0, 300, w, h - 300);
   circle(g, cx, hcy, rh, { fill: '#2b3139' });
+  // 小地图（mini-map）：罗盘弧内显示前方航路——现用航段（品红）指向 OMBAX，方位 289°，比航向偏右 4°
+  const mm = (d, r) => [cx + Math.sin(d * D2R) * r, hcy - Math.cos(d * D2R) * r];
+  L(g, [mm(4, 40), mm(4, rh - 34)], C.mag, 2.4);
   for (let d = -40; d <= 40; d += 5) {
     const a = -Math.PI / 2 + d * D2R, brg = hdg + d, l = brg % 10 === 0 ? 10 : 6;
     L(g, [[cx + Math.cos(a) * rh, hcy + Math.sin(a) * rh], [cx + Math.cos(a) * (rh - l), hcy + Math.sin(a) * (rh - l)]], C.w, 1.5);
@@ -232,7 +235,7 @@ function nd(g, w, h) {
   T(g, 'MAG', ax + 38, 16, C.grn, 12, 'left', 700);
   poly(g, [[ax, ay - r0 + 1], [ax - 7, ay - r0 - 10], [ax + 7, ay - r0 - 10]], { fill: C.w });
   T(g, 'OMBAX', w - 6, 14, C.mag, 14, 'right', 700);
-  T(g, '0412.5z', w - 6, 34, C.w, 13, 'right', 700);
+  T(g, '0358.9z', w - 6, 34, C.w, 13, 'right', 700);
   T(g, '126 NM', w - 6, 54, C.w, 13, 'right', 700);
   T(g, 'TCAS', 8, h - 16, C.cyan, 11); T(g, 'MAP', w - 8, h - 16, C.grn, 11, 'right', 700);
 }
@@ -307,29 +310,40 @@ function elec(g, w, h) {
   T(g, 'LI-ION 32V', 128, 362, C.grey, 9, 'center');
 }
 
-// ———————————————————— 下中央屏：CDU 航段页 ————————————————————
-function cdu(g, w, h) {
+// ———————————————————— 下中央屏：左右两个 CDU 窗口（开机默认：左归机长、右归副驾驶） ————————————————————
+function cdu(g, w, h, page) {
   R(g, 0, 0, w, h, { fill: C.bg });
-  // 787 显示器为窗口化界面：顶部格式选择条
-  const tabs = ['SYS', 'CDU', 'INFO', 'CHKL', 'COMM', 'ND'];
-  tabs.forEach((t, i) => {
-    const x = 6 + i * 83;
-    R(g, x, 4, 79, 22, { fill: t === 'CDU' ? '#1d3a4a' : '#11161c', stroke: t === 'CDU' ? C.cyan : C.dim, lw: 1.2, r: 3 });
-    T(g, t, x + 39.5, 15.5, t === 'CDU' ? C.cyan : C.grey, 12, 'center', 700);
-  });
-  const x0 = 26, lh = 25.5;
-  const big = (s, x, y, c = C.w, al = 'left') => T(g, s, x, y, c, 19, al, 600, MONO);
-  const small = (s, x, y, c = C.w, al = 'left') => T(g, s, x, y, c, 14, al, 500, MONO);
-  big('ACT RTE 1 LEGS', w / 2, 46, C.w, 'center'); small('1/3', w - 22, 46, C.w, 'right');
-  const legs = [['289°', '126NM', 'OMBAX', C.mag], ['296°', ' 84NM', 'TIKOS', C.w], ['270°', '152NM', 'RAMAN', C.w], ['265°', ' 96NM', 'ELVUS', C.w], ['262°', '118NM', 'POKAN', C.w]];
-  legs.forEach(([crs, dist, wpt, c], i) => {
-    const y = 74 + i * lh * 2;
-    small(` ${crs}`, x0, y); small(dist, x0 + 150, y);
-    big(wpt, x0, y + lh, c); big('.850/FL370', w - 24, y + lh, C.w, 'right');
-  });
-  small('------------------------------', x0, 74 + 10 * lh, C.dim);
-  big('<RTE 2 LEGS', x0, 74 + 10.8 * lh + 4); big('RTE DATA>', w - 24, 74 + 10.8 * lh + 4, C.w, 'right');
-  R(g, 20, h - 22, w - 40, 16, { stroke: C.dim, lw: 1 });
+  const big = (t, x, y, c = C.w, al = 'left') => T(g, t, x, y, c, 15, al, 600, MONO);
+  const small = (t, x, y, c = C.w, al = 'left') => T(g, t, x, y, c, 11, al, 500, MONO);
+  const x0 = 9, x1 = w - 9, lh = 22;
+  const lsk = (i) => 44 + i * lh * 2; // 第 i 行选键：小字标签在 lsk(i)，大字数据在 lsk(i) + lh
+  if (page === 'legs') {
+    big('ACT RTE 1 LEGS', w / 2 - 8, 18, C.w, 'center'); small('1/3', x1, 18, C.w, 'right');
+    const legs = [['289°', '126NM', 'OMBAX', C.mag], ['296°', '84NM', 'TIKOS'], ['270°', '152NM', 'RAMAN'], ['265°', '96NM', 'ELVUS'], ['262°', '118NM', 'POKAN']];
+    legs.forEach(([crs, dist, wpt, c = C.w], i) => {
+      small(` ${crs}`, x0, lsk(i)); small(dist, w * 0.52, lsk(i), C.w, 'right');
+      big(wpt, x0, lsk(i) + lh, c); big('.850/FL370', x1, lsk(i) + lh, c === C.mag ? C.mag : C.w, 'right');
+    });
+    small('- - - - - - - - - - - - -', x0, lsk(5) - 2, C.dim);
+    big('<RTE 2 LEGS', x0, lsk(5) + lh); big('RTE DATA>', x1, lsk(5) + lh, C.w, 'right');
+  } else {
+    // 进度页：时间、油量与 AUX（03:42z、42.8 t）、EICAS 燃油流量（2 × 2.85 t/h）、ND 地速 448 kt 相互一致
+    big('DRM789 PROGRESS', w / 2 - 10, 18, C.w, 'center'); small('1/4', x1, 18, C.w, 'right');
+    const cols = [w * 0.57, w * 0.79, x1];
+    const rowS = (y, k, a, b, c) => { small(k, x0, y); [a, b, c].forEach((t, j) => small(t, cols[j], y, C.w, 'right')); };
+    const rowB = (y, k, a, b, c, kc = C.w) => { big(k, x0, y, kc); [a, b, c].forEach((t, j) => big(t, cols[j], y, C.w, 'right')); };
+    rowS(lsk(0), ' FROM', 'ALT', 'ATA', 'FUEL');
+    rowB(lsk(0) + lh, 'ESPAN', 'FL370', '0326z', '44.3');
+    rowS(lsk(1), '', 'DTG', 'ETA', 'FUEL');
+    rowB(lsk(1) + lh, 'OMBAX', '126', '0359z', '41.2', C.mag);
+    rowB(lsk(2) + lh, 'TIKOS', '210', '0410z', '40.1');
+    small(' TO T/D', x0, lsk(3)); big('1268NM', x0, lsk(3) + lh); big('0632z', cols[1], lsk(3) + lh, C.w, 'right');
+    small(' SPD', x0, lsk(4)); small('TOTAL FUEL', x1, lsk(4), C.w, 'right');
+    big('.850', x0, lsk(4) + lh, C.grn); big('42.8', x1, lsk(4) + lh, C.w, 'right');
+    small('- - - - - - - - - - - - -', x0, lsk(5) - 2, C.dim);
+    big('<POS REPORT', x0, lsk(5) + lh);
+  }
+  R(g, 8, h - 26, w - 16, 18, { stroke: C.dim, lw: 1 }); // 草稿行
 }
 
 // ———————————————————— 平视显示器符号（绿色，黑底叠加） ————————————————————
@@ -386,26 +400,29 @@ function efb(g, w, h) {
     g.strokeStyle = '#c3d3e6'; g.lineWidth = 1;
     for (let x = 32; x < w; x += 96) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
     for (let y = 40; y < H; y += 96) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
-    // 航路（灰蓝）与航路编号
-    const P = { A: [40, 300], B: [150, 236], C: [270, 180], D: [400, 120], E: [480, 64], F: [210, 40], G: [330, 290], H: [120, 90] };
-    for (const [a, b, id] of [['A', 'B', 'B208'], ['B', 'C', 'B208'], ['C', 'D', 'A593'], ['D', 'E', 'A593'], ['F', 'C', 'W45'], ['C', 'G', 'W45'], ['H', 'B', 'G471'], ['B', 'G', 'R343']]) {
-      L(g, [P[a], P[b]], '#6f87a3', 2);
-      const m = [(P[a][0] + P[b][0]) / 2, (P[a][1] + P[b][1]) / 2];
+    // 航路图正北朝上、比例 96 px = 50 NM；现用航路与 ND/CDU 一致：本机 → OMBAX（289°，126 NM）→ TIKOS（296°，84 NM）→ RAMAN（270°）
+    const ppn = 96 / 50;
+    const go = (p, brg, nm) => [p[0] + Math.sin(brg * D2R) * nm * ppn, p[1] - Math.cos(brg * D2R) * nm * ppn];
+    const AC = [452, 300], OMB = go(AC, 289, 126), TIK = go(OMB, 296, 84), RAM = go(TIK, 270, 152), ESP = go(AC, 109, 120);
+    const DKX = [330, 96], NIP = [176, 34], EVL = [118, 318], SOK = [478, 168];
+    const ways = [[ESP, OMB, 'A593', 0.65], [OMB, TIK, 'A593'], [TIK, RAM, 'A593', 0.16], [DKX, OMB, 'W45'], [OMB, EVL, 'W45'], [NIP, DKX, 'B208'], [DKX, SOK, 'R343'], [NIP, TIK, 'G471']];
+    for (const [a, b] of ways) L(g, [a, b], '#6f87a3', 2);
+    L(g, [ESP, OMB, TIK, RAM], '#d23ad2', 3.2);
+    for (const [a, b, id, f = 0.5] of ways) {
+      const m = [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
       R(g, m[0] - 17, m[1] - 8, 34, 15, { fill: '#eef0e7', stroke: '#6f87a3', lw: 1 }); T(g, id, m[0], m[1], '#3d5675', 10, 'center', 700);
     }
-    // 现用航路（品红）与本机
-    L(g, [P.A, P.B, P.C, P.D, P.E], '#d23ad2', 3.2);
-    for (const [k, n] of [['B', 'OMBAX'], ['D', 'TIKOS'], ['F', 'NIPAL'], ['G', 'EVLUK'], ['H', 'SOKMA']]) {
-      poly(g, [[P[k][0], P[k][1] - 7], [P[k][0] - 6, P[k][1] + 4], [P[k][0] + 6, P[k][1] + 4]], { fill: '#eef0e7', stroke: '#24324a', lw: 1.5 });
-      T(g, n, P[k][0] + 9, P[k][1] - 9, '#24324a', 10, 'left', 700);
+    for (const [p, n] of [[OMB, 'OMBAX'], [TIK, 'TIKOS'], [NIP, 'NIPAL'], [EVL, 'EVLUK'], [SOK, 'SOKMA']]) {
+      poly(g, [[p[0], p[1] - 7], [p[0] - 6, p[1] + 4], [p[0] + 6, p[1] + 4]], { fill: '#eef0e7', stroke: '#24324a', lw: 1.5 });
+      T(g, n, p[0] + 9, p[1] - 9, '#24324a', 10, 'left', 700);
     }
-    const [vx, vy] = P.C;
+    const [vx, vy] = DKX;
     circle(g, vx, vy, 30, { stroke: '#3a7bd5', lw: 1.2 });
     for (let a = 0; a < 360; a += 30) L(g, [[vx + Math.sin(a * D2R) * 30, vy - Math.cos(a * D2R) * 30], [vx + Math.sin(a * D2R) * 24, vy - Math.cos(a * D2R) * 24]], '#3a7bd5', 1.2);
     poly(g, [0, 1, 2, 3, 4, 5].map((k) => [vx + Math.cos(k * Math.PI / 3) * 7, vy + Math.sin(k * Math.PI / 3) * 7]), { stroke: '#3a7bd5', lw: 1.6 });
-    R(g, vx + 26, vy + 14, 74, 30, { fill: '#ffffff', stroke: '#3a7bd5', lw: 1.2 }); T(g, 'DKX', vx + 63, vy + 23, '#24324a', 11, 'center', 700); T(g, '115.30', vx + 63, vy + 36, '#24324a', 10, 'center', 600);
-    const ox = 205, oy = 209; // 本机位于 OMBAX—DKX 航段上
-    at(g, ox, oy, () => { g.rotate(-0.43); poly(g, [[0, -11], [3, -3], [11, 2], [11, 4], [3, 2], [2, 8], [5, 11], [-5, 11], [-2, 8], [-3, 2], [-11, 4], [-11, 2], [-3, -3]].map(([x, y]) => [x * 1.2, y * 1.2]), { fill: '#d23ad2' }); });
+    R(g, vx + 30, vy - 48, 74, 30, { fill: '#ffffff', stroke: '#3a7bd5', lw: 1.2 }); T(g, 'DKX', vx + 67, vy - 39, '#24324a', 11, 'center', 700); T(g, '115.30', vx + 67, vy - 26, '#24324a', 10, 'center', 600);
+    // 本机：在 ESPAN—OMBAX 航段上，航向 285°
+    at(g, AC[0], AC[1], () => { g.rotate(-75 * D2R); poly(g, [[0, -11], [3, -3], [11, 2], [11, 4], [3, 2], [2, 8], [5, 11], [-5, 11], [-2, 8], [-3, 2], [-11, 4], [-11, 2], [-3, -3]].map(([x, y]) => [x * 1.2, y * 1.2]), { fill: '#d23ad2' }); });
     L(g, [[16, H - 16], [112, H - 16]], '#24324a', 2); T(g, '50 NM', 64, H - 26, '#24324a', 10, 'center', 700);
     T(g, 'NOT FOR NAVIGATION', w - 10, H - 14, '#8a8f99', 10, 'right', 700);
   });
@@ -571,8 +588,9 @@ function pedestal(g, w, h) {
   ['UP', 'FLT', 'ARMED', 'DOWN'].forEach((t, i) => T(g, t, 72, 214 - i * 56, C.w, 8, 'left', 700));
   T(g, 'SPEEDBRAKE', 53, 232, C.w, 8, 'center', 700);
   R(g, w - 60, 22, 14, 196, { fill: '#0c0e10', r: 6 });
-  // 波音襟翼手柄向后拉为放出：UP 在最前；787 卡位含起飞用的 17、18
-  ['UP', '1', '5', '15', '17', '18', '20', '25', '30'].forEach((t, i) => { const y = 32 + i * 22; L(g, [[w - 70, y], [w - 62, y]], C.w, 1.5); T(g, t, w - 74, y, C.w, 8, 'right', 700); });
+  // 波音襟翼手柄向后拉为放出：UP 在最前；10 个卡位含起飞用的 10、17、18；20 处有复飞止动卡槽
+  ['UP', '1', '5', '10', '15', '17', '18', '20', '25', '30'].forEach((t, i) => { const y = 30 + i * 20; L(g, [[w - 70, y], [w - 62, y]], C.w, 1.5); T(g, t, w - 74, y, C.w, 8, 'right', 700); });
+  R(g, w - 61, 168, 3, 5, { fill: '#c9ced5' }); R(g, w - 49, 168, 3, 5, { fill: '#c9ced5' }); // 20 档止动卡槽
   T(g, 'FLAPS', w - 53, 232, C.w, 8, 'center', 700);
   // 燃油控制电门
   R(g, 108, 252, 200, 46, { fill: '#33383f', stroke: '#1a1d21', lw: 2, r: 4 });
@@ -625,7 +643,7 @@ export function createCockpitTextures(quality = 'high') {
   inRect('rob', (w, h) => { pfd(g, w - 171, h); at(g, w - 168, 0, () => aux(g, 168, h)); L(g, [[w - 169.5, 0], [w - 169.5, h]], '#2a3038', 3); });
   inRect('lib', (_, h) => { nd(g, 254, h); at(g, 258, 0, () => eicas(g, 254, h)); L(g, [[256, 0], [256, h]], '#2a3038', 3); });
   inRect('rib', (_, h) => { elec(g, 254, h); at(g, 258, 0, () => nd(g, 254, h)); L(g, [[256, 0], [256, h]], '#2a3038', 3); });
-  inRect('lcd', (w, h) => cdu(g, w, h));
+  inRect('lcd', (_, h) => { cdu(g, 254, h, 'legs'); at(g, 258, 0, () => cdu(g, 254, h, 'prog')); L(g, [[256, 0], [256, h]], '#2a3038', 3); });
   inRect('hud', (w, h) => hud(g, w, h));
   inRect('efb', (w, h) => efb(g, w, h));
   inRect('mcp', (w, h) => mcpStrip(g, w, h));

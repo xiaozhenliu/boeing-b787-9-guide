@@ -115,7 +115,7 @@ export class Labels {
         it.world = it.world || new THREE.Vector3();
         it.world.copy(_w);
         const dist = camera.position.distanceTo(_w);
-        if (this.mode === 'auto' && it.spot.prio > 1 && dist > NEAR_DIST && it.spot.part !== this.selected) show = false;
+        if (this.mode === 'auto' && it.spot.prio > 1 && dist > (it.spot.near ?? NEAR_DIST) && it.spot.part !== this.selected) show = false;
         if (show && it.anchor.mesh && !this.picker.visible(it.anchor.mesh)) show = false;
         if (show && cut && cut.distanceToPoint(_w) < -0.05) show = false;
         if (show) {
