@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>波音 787-9 结构科普交互模型</title>
+<meta name="description" content="可交互的波音 787-9 结构科普模型：复合材料机身分段、翼盒与隔框、GEnx 发动机剖视、“多电”系统与起落架收放，全部由代码程序化生成。" />
+<meta name="theme-color" content="#0b1220" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M32 6c2 0 3 2 3 5v14l20 11v5l-20-6v12l6 5v4l-9-3-9 3v-4l6-5V35l-20 6v-5l20-11V11c0-3 1-5 3-5z' fill='%234cc3ff'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./src/ui/style.css" />
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.js",
+  "three/addons/": "./vendor/three/addons/",
+  "three-mesh-bvh": "./vendor/three-mesh-bvh/index.module.js"
+} }
+</script>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="ui"></div>
+<div id="loading"><div class="ld-title">BOEING 787-9</div><div class="ld-sub">正在以程序化方式生成模型…</div><div class="ld-bar"><i></i></div></div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
