@@ -23,7 +23,8 @@ export const PRESETS = [
   { id: 'tail', label: '尾翼', eye: [76, 15, 26], look: [55, 9, 0] },
   // 驾驶舱：观察员位置（两名飞行员身后、中线上），视线下俯 15°，5 块显示器、HUD、MCP 与油门台同在画面内
   { id: 'cockpit', label: '驾驶舱', eye: [3.5, 5.9, 0], look: [-29.5, -6.11, 0], inside: true }, // 中央观察员座位，俯视 20°：风挡、遮光罩、5 块屏与油门台同框
-  { id: 'cabin', label: '客舱', eye: [16.4, 6.45, 0.95], look: [60, 6.0, 0.95], inside: true, cabin: true },
+  // 客舱：站在 2 号门横向通道、左侧过道口（眼高约 1.55 m），沿过道向后看经济舱（身后 s 16.95–17.8 是厨房模块）
+  { id: 'cabin', label: '客舱', eye: [18.6, 6.35, 0.925], look: [60, 3.6, 0.925], inside: true, cabin: true },
 ];
 
 export class Rig {

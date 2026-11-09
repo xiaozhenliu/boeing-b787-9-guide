@@ -13,16 +13,19 @@ export function h(tag, props = {}, ...kids) {
   }
   for (const c of kids.flat(Infinity)) {
     if (c == null || c === false) continue;
-    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+    el.append(node(c));
   }
   return el;
 }
+
+/** 子节点归一化：DOM 节点原样；控件对象（widgets.js 返回的 { el, sync }）取其 el；其余转文字 */
+const node = (c) => (c.nodeType ? c : c.el?.nodeType ? c.el : document.createTextNode(String(c)));
 
 /** 数字格式：千分位 */
 export const fmt = (n, d = 0) => Number(n).toLocaleString('zh-CN', { minimumFractionDigits: d, maximumFractionDigits: d });
 
 /** 替换子节点：跳过 null/false（原生 replaceChildren 会把 null 渲染成文字 "null"） */
 export function fill(el, ...kids) {
-  el.replaceChildren(...kids.flat(Infinity).filter((c) => c != null && c !== false).map((c) => (c.nodeType ? c : document.createTextNode(String(c)))));
+  el.replaceChildren(...kids.flat(Infinity).filter((c) => c != null && c !== false).map(node));
   return el;
 }

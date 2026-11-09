@@ -18,11 +18,11 @@ export const SPEC = {
   wheelbase: 25.83,
   track: 9.8,
   engineSpacing: 19.81,
-  mtow: 254692, // 561,500 lb（2026 年起新机可选 259,220 kg / 571,500 lb）
-  mtowNew: 259220,
-  mlw: 192777,
-  mzfw: 181437,
-  fuelL: 126356, // 可用燃油 33,380 US gal（TCDS）
+  mtow: 254692, // 561,500 lb（ACAPS Rev Q §2.1.2）
+  mtowNew: 259228, // Rev Q 新增的加大起飞重量选项 571,500 lb（波音官网取整写作 259,220 kg）
+  mlw: 192776, // 425,000 lb
+  mzfw: 181436, // 400,000 lb
+  fuelL: 126356, // 可用燃油 33,380 US gal（EASA TCDS，= 主油箱 2 × 20,895 L + 中央油箱 84,566 L；ACAPS 列 33,399 US gal / 126,429 L）
   rangeKm: 15370, // 波音官网“最远 8,300 nmi”
   rangeNm: 8300,
   seats: 290, // ACAPS 典型两舱：28 公务 + 262 经济

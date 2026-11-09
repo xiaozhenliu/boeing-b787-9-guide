@@ -49,16 +49,20 @@ export function fairingGeometry() {
   return g;
 }
 
-/** 整流罩上的空调（座舱空气压缩机）冲压进气口位置 */
+/**
+ * 整流罩上的空调冲压进气口（每侧上下两个，位于翼根前缘下方）：
+ * kind 'ram' —— 上方方形口，给空调组件热交换器提供冷却空气（用后排出机外，不进客舱）；
+ * kind 'cac' —— 下方凸出的固定进气斗，后接两台电动座舱空气压缩机（全机 4 台）。
+ */
 export function cacInletFrames() {
   const out = [];
   for (const side of [1, -1]) {
-    for (const [s, tau] of [[22.35, 0.98], [23.9, 0.98]]) {
+    for (const [kind, s, tau] of [['ram', 22.15, 1.0], ['cac', 22.45, 0.85]]) {
       const t = side * tau;
       const p = point(s, t, new THREE.Vector3());
       const n = normal(s, t, new THREE.Vector3());
       p.addScaledVector(n, fairingOffset(s, t));
-      out.push({ s, t, p, n, side });
+      out.push({ kind, s, t, p, n, side });
     }
   }
   return out;

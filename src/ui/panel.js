@@ -12,6 +12,9 @@ const CAT_COLORS = {
 const CAT_NAMES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '结构', cabin: '客舱', systems: '机载系统', cockpit: '驾驶舱' };
 export { CAT_COLORS };
 
+/** 波音材料占比的类别名 → 材料图例键（颜色取自该材料） */
+const SHARE_COMP = { 复合材料: 'compCFRP', 铝合金: 'compAl', 钛合金: 'compTi', 钢: 'compSteel', 其他: 'compOther' };
+
 export class Panel {
   constructor(app, { kb, display, actions }) {
     this.app = app;
@@ -60,9 +63,9 @@ export class Panel {
     fill(this.body,
       h('div', { class: 'ov-kicker' }, 'BOEING 787-9 DREAMLINER'),
       h('h2', {}, '波音 787-9 梦想客机'),
-      h('p', { class: 'lead' }, '787-9 是 787 家族的加长型，机身比 787-8 长约 6 米。它是第一种主体结构大量采用碳纤维复合材料的大型民航客机，并以“多电”系统取代了传统的发动机引气。'),
+      h('p', { class: 'lead' }, '787-9 是 787 家族的加长型，机身比 787-8 长约 6 米。按波音的说法，它是第一种以复合材料作为主结构的民航客机（按重量约占 50%），并用“多电”系统取代了绝大部分发动机引气。'),
       h('div', { class: 'spec-grid' }, specs.map(([k, v]) => h('div', { class: 'spec' }, h('b', {}, v), h('span', {}, k)))),
-      S.mtowNew ? h('p', { class: 'spec-note' }, `* 新交付的飞机可选 ${fmt(S.mtowNew / 1000, 1)} t（571,500 lb）。`) : null,
+      S.mtowNew ? h('p', { class: 'spec-note' }, `* 另有 ${fmt(S.mtowNew / 1000, 1)} t（571,500 lb）的加大起飞重量选项（机场规划手册 Rev Q，2025-10）。`) : null,
       facts.length ? h('div', { class: 'dyk' },
         h('div', { class: 'dyk-head' }, h('span', {}, '你知道吗'),
           h('button', { class: 'ic', type: 'button', title: '上一条', onclick: () => show(this.factIdx - 1) }, '‹'),
@@ -114,24 +117,23 @@ export class Panel {
     const A = this.app.aircraft;
     const rows = [];
     if (kind === 'materials') {
-      const share = new Map((this.kb.MATERIAL_SHARE || []).map(([n, v]) => [n, v]));
       const used = new Set(A.meshes.map((m) => m.userData.comp));
       for (const [key, info] of Object.entries(this.kb.MATERIALS || {})) {
         if (!used.has(key)) continue;
-        rows.push({ key, color: info.color, name: info.name, sub: info.desc, val: share.get(info.name) });
+        rows.push({ key, color: info.color, name: info.name, sub: info.desc });
       }
-      const bar = (this.kb.MATERIAL_SHARE || []).length
+      // 占比按波音公开的五大类给出（“复合材料”含碳纤维、玻璃纤维与夹层结构），不挂到单一材料行上
+      const SH = this.kb.MATERIAL_SHARE || [];
+      const colorOf = (n) => this.kb.MATERIALS?.[SHARE_COMP[n]]?.color || '#666';
+      const bar = SH.length
         ? h('div', { class: 'share' },
-          h('div', { class: 'share-bar' }, this.kb.MATERIAL_SHARE.map(([n, v]) => {
-            const m = Object.values(this.kb.MATERIALS).find((q) => q.name === n);
-            return h('i', { style: { width: `${v}%`, background: m?.color || '#666' }, title: `${n} ${v}%` });
-          })),
-          h('div', { class: 'share-cap' }, '787 结构重量占比（波音公开数据）'))
+          h('div', { class: 'share-bar' }, SH.map(([n, v]) => h('i', { style: { width: `${v}%`, background: colorOf(n) }, title: `${n} ${v}%` }))),
+          h('div', { class: 'share-cap' }, SH.map(([n, v], i) => [i ? ' · ' : null, h('span', {}, `${n} ${v}%`)]), h('br'), '787 结构重量占比（波音公开数据；复合材料以碳纤维为主）'))
         : null;
       fill(this.legend, h('h3', {}, '材料分布'), bar, this.rowList(rows, 'comp'));
     } else if (kind === 'systems') {
       for (const [key, color, name, sub] of this.kb.SYSTEMS_LEGEND || []) rows.push({ key, color, name: this.kb.PARTS?.[key]?.name || name, sub });
-      fill(this.legend, h('h3', {}, '“多电”系统'), h('p', { class: 'legend-note' }, '787 取消了发动机引气：增压、机翼防冰、发动机起动都改由电力完成。光带流动方向即能量传递方向。'), this.rowList(rows, 'partId'));
+      fill(this.legend, h('h3', {}, '“多电”系统'), h('p', { class: 'legend-note' }, '787 几乎取消了发动机引气：增压、机翼防冰、发动机起动都改由电力完成。光带流动方向即能量传递方向。'), this.rowList(rows, 'partId'));
     } else {
       const used = new Set(A.meshes.map((m) => sectionKey(m.userData)));
       const info = this.kb.SECTION_INFO || {};

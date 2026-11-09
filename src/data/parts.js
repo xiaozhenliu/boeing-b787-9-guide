@@ -5,7 +5,7 @@
 // 主要参考来源：
 //   波音 787 官网技术规格（787-9：航程最多 8,300 nmi、MTOW 259,220 kg）：https://www.boeing.com/commercial/787
 //   波音《787 Dreamliner by Design》：https://www.boeing.com/commercial/787/by-design
-//   波音 D6-58333 787 机场规划手册（ACAPS；核对使用 Rev P，2024-12）：https://www.boeing.com/content/dam/boeing/v2/airports/acaps/787_Rev_P.pdf
+//   波音 D6-58333 787 机场规划手册（ACAPS Rev Q，2025-10；Rev Q 只改了第 2、7 节的加大起飞重量）：https://www.boeing.com/content/dam/boeing/v2/airports/acaps/787_ACAP_Rev_Q.pdf
 //   波音 787 救援（ARFF）复合材料资料：https://www.boeing.com/content/dam/boeing/v2/airports/arff/787_composite_arff_data_2025.pdf
 //   EASA TCDS IM.A.115（Boeing 787，Issue 30）：https://www.easa.europa.eu/en/downloads/7302/en
 //   EASA TCDS IM.E.102（GEnx）：https://www.easa.europa.eu/en/downloads/7641/en
@@ -19,6 +19,8 @@
 //   罗罗 Trent 1000：https://www.rolls-royce.com/products-and-services/civil-aerospace/widebody/trent-1000.aspx
 //   GE 2015 新闻稿（叶片 22→18 片、复合材料机匣减重、CFAN）：https://www.geaerospace.com/news/press-releases/commercial-engines/ges-composite-fan-blade-revolution-turns-20-years-old
 //   普惠 APS5000（单轴变转速、450 kVA、43,100 ft）：https://www.rtx.com/en/prattwhitney/products/commercial-auxiliary-power-units
+//   787 RAT 自动放出条件（飞行员培训资料整理）：https://www.allairplaneflying.com/2024/04/boeing-787-ram-air-turbine-rat.html
+//   787 空调进气口布局（上方热交换器冲压口、下方压缩机进气斗；机库参观照片）：https://yinlei.org/blog/en/2017/05/en-787_cac_inlet/
 //   赛峰 787（起落架 / 电刹车）：https://web.safran-group.com/safran-on-board/en/boeing-787-dreamliner.html
 //                                https://www.safran-group.com/products-services/boeing-787-dreamliner-electric-brake
 //   波音 2004-03-04 选定 Messier-Dowty：https://boeing.mediaroom.com/2004-03-04-Boeing-Names-Snecmas-Messier-Dowty-to-7E7-Team
@@ -51,6 +53,29 @@
 //   Saint-Gobain 石英纤维雷达罩：https://www.advanced-ceramic-composites.saint-gobain.com/news/using-quartz-fiber-aerospace-radomes
 //                                https://modstore.aero/modification/saint-gobain-performance-plastics-corp-installation-of-norton-radome-b787-dreamliner-2
 //   波音接收 Spirit 威奇托、塔尔萨等业务：https://www.okcommerce.gov/boeing-completes-acquisition-of-spirit-aerosystems/
+
+/** 帮助面板“主要资料来源”（面向读者的精选清单，可点击核对；逐条出处见上方注释） */
+export const SOURCES = [
+  ['波音 D6-58333《787 机场规划手册》Rev Q（2025-10）', 'https://www.boeing.com/content/dam/boeing/v2/airports/acaps/787_ACAP_Rev_Q.pdf'],
+  ['EASA 型号合格证数据单 TCDS IM.A.115（Boeing 787）', 'https://www.easa.europa.eu/en/downloads/7302/en'],
+  ['波音 787 官网技术规格', 'https://www.boeing.com/commercial/787'],
+  ['波音《787 Dreamliner by Design》', 'https://www.boeing.com/commercial/787/by-design'],
+  ['Boeing AERO 2006 Q4《Boeing 787 from the Ground Up》', 'https://www.boeing.com/commercial/aeromagazine/articles/qtr_4_06/article_04_2.html'],
+  ['Boeing AERO 2007 Q4《787 No-Bleed Systems》', 'https://www.boeing.com/commercial/aeromagazine/articles/qtr_4_07/AERO_Q407_article2.pdf'],
+  ['波音 787 救援（ARFF）复合材料资料', 'https://www.boeing.com/content/dam/boeing/v2/airports/arff/787_composite_arff_data_2025.pdf'],
+  ['FAA 787 关键系统评审报告（2014）', 'https://www.faa.gov/sites/faa.gov/files/about/plans_reports/787_Report_Final.pdf'],
+  ['NTSB AIR-14/01：JAL 787-8 APU 电池起火调查', 'https://www.ntsb.gov/investigations/AccidentReports/Reports/AIR1401.pdf'],
+  ['英国 AAIB：G-ZBJB 调查报告（前起落架构造）', 'https://assets.publishing.service.gov.uk/media/6346baf78fa8f53465d139bb/Boeing_787-8_G-ZBJB_12-22.pdf'],
+  ['波音新闻稿：787 机翼极限载荷试验（2010-03-28）', 'https://boeing.mediaroom.com/2010-03-28-Boeing-Completes-Ultimate-Load-Wing-Test-on-787'],
+  ['GE Aerospace：GEnx 发动机', 'https://www.geaerospace.com/commercial/aircraft-engines/genx'],
+  ['罗尔斯·罗伊斯：Trent 1000 发动机', 'https://www.rolls-royce.com/products-and-services/civil-aerospace/widebody/trent-1000.aspx'],
+  ['普惠：APS5000 辅助动力装置', 'https://www.rtx.com/en/prattwhitney/products/commercial-auxiliary-power-units'],
+  ['赛峰：787 电刹车', 'https://www.safran-group.com/products-services/boeing-787-dreamliner-electric-brake'],
+  ['FlightGlobal《787 special: Electric dream》', 'https://www.flightglobal.com/787-special-electric-dream/69721.article'],
+  ['Aviation Week《787 Hydraulic System》', 'https://aviationweek.com/787-hydraulic-system'],
+  ['Aviation Today《Boeing 787: Integration’s Next Step》（2005-06）', 'https://www.aviationtoday.com/2005/06/01/boeing-787-integrations-next-step/'],
+  ['CompositesWorld：波音大型客机复合材料应用', 'https://www.compositesworld.com/articles/boeing-sets-pace-for-composite-usage-in-large-civil-aircraft'],
+];
 
 export const CATEGORIES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '内部结构', cabin: '客舱与货舱', systems: '系统与舱门', cockpit: '驾驶舱' };
 
@@ -267,8 +292,8 @@ export const PARTS = {
   apu: {
     name: '辅助动力装置（APU）', en: 'Auxiliary Power Unit (APS5000)', cat: 'tail',
     summary: '尾锥里的 APS5000 辅助动力装置，只发电、不供引气。',
-    body: '辅助动力装置（APU）是一台装在尾锥里的小型燃气涡轮，排气从机尾尖端排出。787-9 使用汉胜（Hamilton Sundstrand）设计、现属普惠的 APS5000，普惠介绍它是单轴、变转速的燃气涡轮，海平面可发出 450 kVA 电力，并能在 43,100 ft 以下起动和运行。EASA 型号合格证数据单把它注明为“无引气 APU”，它不向飞机提供压缩空气，只驱动两台 225 kVA 起动发电机。在地面，它为飞机供电，并用电力起动主发动机。普惠称它是业界首个用于大型民航客机的全电 APU。',
-    facts: [['型号', 'APS5000（汉胜设计，现属普惠）'], ['输出', '2 × 225 kVA，海平面共 450 kVA'], ['引气', '无（EASA TCDS 注明 no bleed-air）'], ['起动与工作高度', '43,100 ft 以下']],
+    body: '辅助动力装置（APU）是一台装在尾锥里的小型燃气涡轮，排气从机尾尖端排出。787-9 使用汉胜（Hamilton Sundstrand）设计、现属普惠的 APS5000，普惠介绍它是单轴、变转速的燃气涡轮，海平面可发出 450 kVA 电力，并能在 43,100 ft 以下起动和运行。EASA 型号合格证数据单把它注明为“无引气 APU”，它不向飞机提供压缩空气，只驱动两台 225 kVA 起动发电机。它装在后压力隔板之后的尾锥内，进气门开在尾锥侧面。在地面，它为飞机供电，并用电力起动主发动机；空中如果发电机故障，也可以起动 APU 补充供电。普惠称它是业界首个用于大型民航客机的全电 APU。',
+    facts: [['位置', '尾锥（后压力隔板之后）'], ['型号', 'APS5000（汉胜设计，现属普惠）'], ['输出', '2 × 225 kVA，海平面共 450 kVA'], ['引气', '无（EASA TCDS 注明 no bleed-air）'], ['起动与工作高度', '43,100 ft 以下']],
   },
   apuDoor: {
     name: 'APU 进气门', en: 'APU Inlet Door', cat: 'tail',
@@ -601,37 +626,37 @@ export const PARTS = {
   beacon: {
     name: '防撞灯', en: 'Anti-Collision Beacon', cat: 'systems',
     summary: '机背和机腹的红色防撞灯，发动机起动前打开。',
-    body: '防撞灯是装在机背和机腹的红色闪光灯，提醒地面人员和其他飞机注意。按照通行的操作规范，飞行员在起动发动机前打开它，发动机全部关车后才关闭，地勤看到红灯闪烁就知道不能靠近发动机。787 的外部照明几乎全部采用 LED 或 HID 灯，寿命比传统灯泡长得多。',
+    body: '防撞灯是装在机背和机腹的红色闪光灯，提醒地面人员和其他飞机注意。按照通行的操作规范，飞行员在起动发动机前打开它，发动机全部关车后才关闭，地勤看到红灯闪烁就知道不能靠近发动机。787 的外部照明几乎全部采用 LED 或 HID 灯，寿命比传统灯泡长得多。在“显示”面板打开“夜景”，可以看到它有节奏地闪烁。',
     facts: [['位置', '机背、机腹'], ['颜色', '红色闪光'], ['使用时机', '起动前打开，关车后关闭']],
   },
   strobes: {
     name: '频闪灯', en: 'Strobe Lights', cat: 'systems',
     summary: '翼尖和机尾的白色频闪灯，在跑道上和空中提高可见度。',
-    body: '频闪灯是位于翼尖和机尾的白色高亮闪光灯，在夜间和低能见度时让远处的飞机也能看到本机。通常飞行员在进入跑道准备起飞时打开它，着陆脱离跑道后关闭，避免在停机坪上晃到别人的眼睛。787 的外部照明几乎全部采用 LED 或 HID 灯。',
+    body: '频闪灯是位于翼尖和机尾的白色高亮闪光灯，在夜间和低能见度时让远处的飞机也能看到本机。通常飞行员在进入跑道准备起飞时打开它，着陆脱离跑道后关闭，避免在停机坪上晃到别人的眼睛。787 的外部照明几乎全部采用 LED 或 HID 灯。打开“夜景”可以看到频闪效果。',
     facts: [['位置', '翼尖、机尾'], ['颜色', '白色闪光'], ['使用时机', '进跑道时打开，脱离跑道后关闭']],
   },
   antennas: {
     name: '天线', en: 'Antennas', cat: 'systems',
     summary: '机背和机腹的各种通信导航天线，多为刀形。',
     body: '机身表面那些小鳍片和鼓包是各种天线：VHF 天线用于和管制员通话，应答机和空中防撞系统（TCAS）天线分装在机背和机腹，GPS 天线在机背。机上网络和卫星通信天线通常装在机背的整流罩里，由航空公司选装。波音机场规划手册还标出了航站楼无线局域网单元（TWLU）天线的位置：距机头约 7.1 m、离地约 7.7 m。',
-    facts: [['常见种类', 'VHF、应答机、TCAS、GPS、卫星通信'], ['TWLU 天线', '距机头约 7.1 m，离地约 7.7 m'], ['形态', '刀形天线、平板天线、整流罩']],
+    facts: [['常见种类', 'VHF、应答机、TCAS、GPS、卫星通信'], ['VHF', '3 副（模型：机背 2、机腹 1）'], ['TCAS', '2 副（机背、机腹各 1）'], ['GPS', '2 副（机背）'], ['TWLU 天线', '距机头约 7.1 m，离地约 7.7 m']],
   },
   ram: {
     name: '冲压空气涡轮（RAT）', en: 'Ram Air Turbine', cat: 'systems',
     summary: '应急时放出的冲压空气涡轮，靠迎面气流发电并驱动液压泵。',
-    body: '冲压空气涡轮（RAT）平时收在机身内（模型中位于右侧翼身整流罩），在两台发动机都失去动力等紧急情况下自动放出，像风车一样被迎面气流吹转。波音资料显示，787 的 RAT 同时驱动一台发电机和一台液压泵，为飞控等关键系统提供应急电力和液压。它在空中放出后不能收回，要落地后由机务人员复位。RAT 由汉胜（Hamilton Sundstrand，今 Collins 宇航）提供。',
-    facts: [['驱动设备', '发电机 + 液压泵（波音 AERO 2007）'], ['放出', '紧急情况下自动放出，空中不能收回'], ['供应商', '汉胜（今 Collins 宇航）']],
+    body: '冲压空气涡轮（RAT）平时收在机身内（模型中位于右侧翼身整流罩），紧急时放出，像风车一样被迎面气流吹转。波音资料显示，787 的 RAT 同时驱动一台发电机和一台液压泵，为飞控等关键系统提供应急电力和液压。以下情况它会自动放出：两台发动机都失效；三套液压系统压力都过低；机长和副驾驶的飞行仪表全部失电。飞行员也可以按液压面板上的 RAT 电门手动放出。它在空中放出后不能收回，要落地后由机务人员复位。RAT 由汉胜（Hamilton Sundstrand，今 Collins 宇航）提供。可以在“操纵”面板里试着把它放出来。',
+    facts: [['驱动设备', '发电机 + 液压泵（波音 AERO 2007）'], ['自动放出', '双发失效 / 三套液压均低压 / 两侧飞行仪表失电'], ['收回', '空中不能收回，落地后由机务复位'], ['供应商', '汉胜（今 Collins 宇航）']],
   },
   cac: {
     name: '座舱空气压缩机进气口', en: 'Cabin Air Compressor Inlets', cat: 'systems',
-    summary: '座舱空气压缩机的专用进气口，787 用电动压缩机增压。',
-    body: '传统客机从发动机压气机中引出高温高压空气，用来给客舱增压和供气。787 取消了这种引气，改用专用的座舱空气进气口（模型中画在翼身整流罩上），由电动座舱空气压缩机（CAC）把外界新鲜空气压缩后送入低压空调组件。压缩机电机由 ±270 V 直流电驱动，可以按需调节转速和供气量。波音 2007 年的资料称，无引气架构让发动机的功率提取最多减少约 35%，燃油消耗降低约 3%。',
-    facts: [['供气方式', '电动压缩机，不用发动机引气'], ['电机电源', '±270 V 直流'], ['效益（波音 2007）', '功率提取最多少约 35%，节油约 3%']],
+    summary: '翼根前下方的专用进气口：787 不用引气，靠电动压缩机吸入外界空气增压。',
+    body: '传统客机从发动机压气机中引出高温高压空气，用来给客舱增压和供气。787 的座舱供气不再用引气，翼根前缘下方的整流罩两侧各有上下两个进气口。下方带厚唇边的固定进气斗是座舱空气压缩机进气口，后面接电动座舱空气压缩机（CAC，全机 4 台，每套空调组件 2 台），把外界新鲜空气压缩后送入低压空调组件。上方的方形口给空调组件的热交换器提供冷却空气，用完后排出机外，不进入客舱。压缩机电机由 ±270 V 直流电驱动，可以按需调节转速和供气量。波音 2007 年的资料称，无引气架构让发动机的功率提取最多减少约 35%，燃油消耗降低约 3%。这组进气口也是辨认 787 的外观特征之一。',
+    facts: [['下方进气斗', '每侧 1 个，供座舱空气压缩机'], ['上方方形口', '每侧 1 个，供热交换器冷却'], ['压缩机', '4 台，电机由 ±270 V 直流驱动'], ['效益（波音 2007）', '功率提取最多少约 35%，节油约 3%']],
   },
   landingLights: {
     name: '着陆灯', en: 'Landing Lights', cat: 'systems',
     summary: '起飞和着陆时照亮跑道的大功率着陆灯。',
-    body: '着陆灯是飞机上最亮的照明灯之一，起飞、进近和着陆时照亮前方跑道，同时让飞机在远处就能被看见。模型把它画在翼根前方的整流罩处。787 的着陆灯采用 HID（高强度气体放电）等新型光源，波音 2006 年称其寿命比传统灯长一个数量级，减少了换灯次数。',
+    body: '着陆灯是飞机上最亮的照明灯之一，起飞、进近和着陆时照亮前方跑道，同时让飞机在远处就能被看见。模型把它画在翼根前方的整流罩处，灯罩做成与整流罩齐平的曲面以减小阻力，打开“夜景”时会亮起。787 的着陆灯采用 HID（高强度气体放电）等新型光源，波音 2006 年称其寿命比传统灯长一个数量级，减少了换灯次数。',
     facts: [['使用时机', '起飞、进近、着陆'], ['光源', 'HID 等长寿命光源'], ['寿命', '比传统灯长约一个数量级（波音 2006）']],
   },
 };

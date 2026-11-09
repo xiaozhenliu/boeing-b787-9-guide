@@ -256,12 +256,17 @@ export class Systems {
     for (const [sec, list] of Object.entries(by)) this.addExt(new THREE.Mesh(merge(list), this.M.antenna), sec, 'antennas', 'compGlass');
   }
 
-  // ———————————————— CAC 冲压进气口 ————————————————
+  // ———————————————— 空调冲压进气口：上方热交换器方口 + 下方压缩机进气斗 ————————————————
   buildInlets() {
     const mouths = [], lips = [];
     for (const f of cacInletFrames()) {
-      mouths.push(curvedPatch(fp, f.s, f.t, 0.3, 0.12, { n: 3.2, extra: 0.008 }));
-      lips.push(lipRing(fp, f.s, f.t, 0.3, 0.12, { n: 3.2, extra: 0.012, r: 0.02 }));
+      if (f.kind === 'ram') { // 方形口（近似矩形的超椭圆），唇边较薄
+        mouths.push(curvedPatch(fp, f.s, f.t, 0.25, 0.1, { n: 6, extra: 0.006 }));
+        lips.push(lipRing(fp, f.s, f.t, 0.25, 0.1, { n: 6, extra: 0.01, r: 0.014 }));
+      } else { // 压缩机进气斗：圆角口，唇边加厚、略离开表面
+        mouths.push(curvedPatch(fp, f.s, f.t, 0.27, 0.115, { n: 3.2, extra: 0.01 }));
+        lips.push(lipRing(fp, f.s, f.t, 0.27, 0.115, { n: 3.2, extra: 0.02, r: 0.026 }));
+      }
     }
     this.addExt(new THREE.Mesh(merge(mouths), this.M.blackPaint), 'fairing', 'cac', 'compOther');
     this.addExt(new THREE.Mesh(merge(lips), this.M.wingDark), 'fairing', 'cac', 'compAl');
@@ -420,12 +425,11 @@ export class Systems {
         wm(16, 0.03, S), wm(22, 0.03, S), wm(27.1, 0.03, S)]);
       // 电刹车：后 E/E 舱 → 主起落架
       E([V(33.1, 2.6, S * 0.7), V(32.4, 3.0, S * 2.0), V(31.2, 3.55, S * 3.6), V(30.9, 3.75, S * 4.6)]);
-      // 冲压进气 → 压缩机前端
-      for (const q of cacInletFrames().filter((f) => f.side === S)) {
+      // 压缩机进气斗 → 分两路进入两台压缩机前端（上方热交换器冲压空气只用于冷却、不进客舱，不画）
+      for (const q of cacInletFrames().filter((f) => f.side === S && f.kind === 'cac')) {
         const start = q.p.clone().addScaledVector(q.n, -0.05);
-        A(q.s < 23
-          ? [start, V(22.4, 2.62, S * 1.62), V(22.2, 2.15, S * 0.95), V(22.12, 2.0, S * 0.72)]
-          : [start, V(23.7, 2.42, S * 1.55), V(23.25, 2.2, S * 1.0), V(23.12, 2.0, S * 0.72)]);
+        A([start, V(22.4, 2.62, S * 1.62), V(22.2, 2.15, S * 0.95), V(22.12, 2.0, S * 0.72)]);
+        A([start, V(22.55, 2.6, S * 1.6), V(23.1, 2.32, S * 1.12), V(23.12, 2.0, S * 0.72)]);
       }
       // 压缩机 → 空调组件
       A([V(23.68, 2.0, S * 0.72), V(24.2, 1.97, S * 0.7), V(24.62, 1.92, S * 0.72)]);
@@ -435,7 +439,7 @@ export class Systems {
         V(29.2, 5.7, S * 2.6), V(29.2, 6.6, S * 2.05), V(29.0, CEIL, S * 0.9)]);
       A([V(29.0, CEIL, S * 0.9), V(28.4, CEIL, S * 0.55), V(20, CEIL, S * 0.55), V(8.6, CEIL, S * 0.55)]);
       A([V(29.0, CEIL, S * 0.9), V(29.6, CEIL, S * 0.55), V(40, CEIL, S * 0.55), V(50.3, CEIL - 0.07, S * 0.55)]);
-      // 发动机进气道防冰：787 唯一保留的引气 —— 高压压气机引气 → 上分叉面 → 风扇整流罩内 → 唇口环形腔
+      // 发动机进气道防冰：787 保留的两项引气用途之一（另一项为液压油箱增压，未画） —— 高压压气机引气 → 上分叉面 → 风扇整流罩内 → 唇口环形腔
       bleed.push(flowTube([L(3.35, 0.84, 0), L(3.55, 1.5, 0), L(3.15, 1.7, 0), L(2.0, 1.68, 0), L(0.75, 1.62, 0), L(0.24, 1.575, 0)], 0.04));
       const ring = [];
       for (let j = 0; j < 48; j++) { const ph = (j / 48) * Math.PI * 2; ring.push(L(0.2, 1.57 * Math.cos(ph), 1.57 * Math.sin(ph))); }

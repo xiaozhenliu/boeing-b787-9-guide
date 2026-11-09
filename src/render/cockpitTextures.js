@@ -668,11 +668,13 @@ export function createCockpitMask() {
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
   g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
-  g.fillStyle = '#fff';
+  // 窗洞向外膨胀约 2 px（≈18–25 mm）：栅格台阶全部落在 45 mm 宽的内压边 U 形槽背后，
+  // 否则洞比玻璃轮廓小的地方会露出一圈锯齿状的内饰板颜色
+  g.fillStyle = '#fff'; g.strokeStyle = '#fff'; g.lineWidth = 4; g.lineJoin = 'round';
   for (const pts of windowOutlinesST()) {
     g.beginPath();
     pts.forEach(([s, t], i) => { const x = (s / MASK_S) * W, y = (t / TAU) * H; if (i) g.lineTo(x, y); else g.moveTo(x, y); });
-    g.closePath(); g.fill();
+    g.closePath(); g.fill(); g.stroke();
   }
   const tex = new THREE.CanvasTexture(cv);
   tex.flipY = false; tex.generateMipmaps = false;

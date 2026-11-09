@@ -104,8 +104,8 @@ function bleedCompare() {
 }
 
 const MAP = {
-  laminate: ['s41', 's43', 's44', 's46', 's47', 's48', 'wing', 'wingSkin', 'upperSkin', 'lowerSkin', 'htail', 'vtail'],
-  stiffened: ['stringers', 'frames', 'skinPanels', 'shearTies'],
+  laminate: ['s41', 's43', 's44', 's46', 's47', 's48', 'wing', 'htail', 'vtail'],
+  stiffened: ['stringers', 'frames'],
   bleedCompare: ['cacUnit', 'packs', 'flowAir', 'cac', 'flowBleed'],
 };
 const FN = { laminate, stiffened, bleedCompare };

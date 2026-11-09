@@ -18,18 +18,6 @@ import { Tour, stepMs } from './tour.js';
 import { Ambience } from './ambience.js';
 import { Dims } from './dims.js';
 
-export // 帮助面板中的资料清单（知识库若导出 SOURCES 则优先使用）
-const REFS = [
-  'Boeing D6-58333《787 Airplane Characteristics for Airport Planning》Rev Q（2025-10）',
-  'EASA 型号合格证数据单 TCDS IM.A.115（Boeing 787）',
-  'Boeing：787 By Design；新闻稿《Boeing Completes Ultimate-Load Wing Test on 787》（2010-03-28）',
-  'M. Sinnett（Boeing）：787 No-Bleed Systems，AERO Magazine Q4 2007；787updates 访谈实录',
-  'FlightGlobal《787 special: Electric dream》；Aviation Week《787 Hydraulic System》',
-  'Avio Aero：GEnx 附件齿轮箱资料（核心机安装）；GE Aerospace：GEnx 制造报道',
-  'NTSB AIR-14/01《Auxiliary Power Unit Battery Fire, JAL Boeing 787-8, JA829J》',
-  'Aviation Today《Boeing 787: Integration’s Next Step》（2005-06）',
-];
-
 const MODES = [
   { id: 'exterior', label: '外观', key: '1', display: { scheme: 'paint', skin: 'solid', structure: false, cabin: false, systems: false, cut: 'none' }, spots: 'exterior' },
   { id: 'structure', label: '结构', key: '2', display: { scheme: 'paint', skin: 'ghost', structure: true, cabin: false, systems: false, cut: 'none' }, spots: 'structure' },
@@ -211,7 +199,7 @@ export function initUI(app) {
       ].map(([k, v]) => [h('dt', {}, k), h('dd', {}, v)])),
       h('p', { class: 'src' }, '本模型完全由代码程序化生成（Three.js），未使用任何图片、扫描或建模软件。几何依据波音《787 机场规划手册》（D6-58333 Rev Q）、EASA/FAA 型号合格证数据单及公开资料；内部结构与系统布置为科普示意。'),
       h('details', { class: 'refs' }, h('summary', {}, '主要资料来源'),
-        h('ul', {}, (KB.SOURCES?.length ? KB.SOURCES : REFS).map((r) => h('li', {}, typeof r === 'string' ? r : r.title || r.name || String(r))))),
+        h('ul', {}, KB.SOURCES.map(([title, url]) => h('li', {}, h('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, title))))),
       h('button', { type: 'button', class: 'btn primary', onclick: () => help.classList.remove('on') }, '知道了')));
   ui.append(help);
 

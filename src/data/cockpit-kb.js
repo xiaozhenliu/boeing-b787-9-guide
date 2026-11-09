@@ -176,7 +176,7 @@ export const FD_SPOTS = [
   { part: 'fdNd', prio: 1, at: { body: [2.27, 5.21, 0.272] }, view: 'L', off: [-16, -50] },
   { part: 'fdEicas', prio: 1, at: { body: [2.27, 5.21, 0.118] }, view: 'C', off: [10, -50] },
   { part: 'fdLower', prio: 1, at: { body: [2.41, 4.984, 0] }, view: 'C', off: [0, 52] },
-  { part: 'fdThrust', prio: 1, at: { body: [2.574, 5.178, 0] }, view: 'C', off: [60, 30] },
+  { part: 'fdThrust', prio: 1, at: { body: [2.574, 5.178, 0] }, view: 'C', off: [125, -8] }, // 标签放到下中央显示器右侧的暗区，不压屏幕文字
   { part: 'fdYoke', prio: 1, at: { body: [2.52, 5.15, 0.58] }, view: 'C', off: [-30, 56] },
   { part: 'fdEfb', prio: 1, at: { body: [2.525, 5.353, 1.15] }, view: 'L', off: [-20, -48] },
   { part: 'fdOverhead', prio: 1, at: { body: [2.888, 6.168, 0] }, view: 'O', off: [0, 48] },

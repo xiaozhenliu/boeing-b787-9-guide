@@ -185,19 +185,24 @@ export function buildInterior(M, reg) {
 
   // ———————————————— 客舱 ————————————————
   const seatE = [], seatB = [], cushion = [], bins = [], mon = [], galley = [], cargo = [], walls = [];
-  // 经济舱座椅（3-3-3）：宽 0.44 m、排距 0.81 m（32 in）
+  // 经济舱座椅（3-3-3）：座垫宽 0.42 m + 扶手 0.04 m → 座距 0.46 m；排距 0.81 m（32 in）。
+  // 九座排宽 3 × 1.42 m，两条过道各 0.43 m（17 in，扶手高度处），靠窗座外侧扶手贴着侧壁
+  const PZ = 0.46;
   const ecoSeat = (s, z) => {
     const y = CABIN_FLOOR;
-    seatE.push(box(s, y + 0.42, z, 0.46, 0.1, 0.44)); // 坐垫
-    const back = box(0, 0.38, 0, 0.09, 0.76, 0.44); back.rotateZ(-0.16); back.translate(s + 0.24, y + 0.46, z); seatE.push(back);
-    cushion.push(box(s + 0.2, y + 0.92, z, 0.1, 0.18, 0.4)); // 头枕
+    seatE.push(box(s, y + 0.42, z, 0.46, 0.1, 0.42)); // 坐垫
+    const back = box(0, 0.38, 0, 0.09, 0.76, 0.42); back.rotateZ(-0.16); back.translate(s + 0.24, y + 0.46, z); seatE.push(back);
+    cushion.push(box(s + 0.2, y + 0.92, z, 0.1, 0.18, 0.38)); // 头枕
     seatE.push(box(s + 0.02, y + 0.18, z, 0.36, 0.36, 0.06)); // 椅腿
-    mon.push(box(s + 0.18, y + 0.78, z, 0.02, 0.17, 0.26)); // 椅背娱乐屏
+    // 椅背娱乐屏：嵌在靠背后侧（朝向后排乘客），随靠背后倾
+    const scr = box(0.053, 0.36, 0, 0.02, 0.17, 0.26); scr.rotateZ(-0.16); scr.translate(s + 0.24, y + 0.46, z); mon.push(scr);
   };
   const ecoRow = (s, layout) => {
-    const blocks = layout === 9 ? [[-2.11, 3], [-0.44, 3], [1.23, 3]] : [[-1.89, 2], [-0.44, 3], [1.45, 2]];
-    for (const [z0, n] of blocks) for (let k = 0; k < n; k++) ecoSeat(s, z0 + k * 0.44);
-    for (const [z0, n] of blocks) { seatE.push(box(s - 0.02, CABIN_FLOOR + 0.58, z0 - 0.25, 0.42, 0.05, 0.05)); seatE.push(box(s - 0.02, CABIN_FLOOR + 0.58, z0 + (n - 1) * 0.44 + 0.25, 0.42, 0.05, 0.05)); }
+    // 2-3-2 排的靠过道座与 3-3-3 排对齐，靠窗座向内收（尾段侧壁开始收窄）
+    const blocks = layout === 9 ? [[-2.31, 3], [-0.46, 3], [1.39, 3]] : [[-1.85, 2], [-0.46, 3], [1.39, 2]];
+    for (const [z0, n] of blocks) for (let k = 0; k < n; k++) ecoSeat(s, z0 + k * PZ);
+    // 扶手：每个座位块 n + 1 根（两端 + 座间）
+    for (const [z0, n] of blocks) for (let k = 0; k <= n; k++) seatE.push(box(s - 0.02, CABIN_FLOOR + 0.58, z0 + (k - 0.5) * PZ, 0.42, 0.05, 0.04));
   };
   // 公务舱（1-2-1 平躺座椅隔间）：排距 1.17 m
   const bizSeat = (s, z, dir) => {

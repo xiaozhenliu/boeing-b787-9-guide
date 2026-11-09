@@ -100,7 +100,7 @@ export const HOTSPOTS = [
   { part: 'beacon', set: 'exterior', prio: 2, at: { body: [27.6, 7.9, 0], follow: 's44' }, off: [30, -50] },
   { part: 'antennas', set: 'exterior', prio: 2, at: { body: [15.45, 8.05, 0], follow: 's43' }, off: [-30, -56] },
   { part: 'landingLights', set: 'exterior', prio: 2, at: { body: [21.2, 3.5, 2.66], follow: 'fairing' }, off: [-60, 30] },
-  { part: 'cac', set: 'exterior', prio: 2, at: { body: [22.35, 3.02, 2.7], follow: 'fairing' }, off: [-50, 50] },
+  { part: 'cac', set: 'exterior', prio: 2, at: { body: [22.45, 2.64, 2.42], follow: 'fairing' }, off: [-50, 50] },
   { part: 'strobes', set: 'exterior', prio: 2, at: { dir: [1, 0.3, 0.4], side: 1 }, off: [60, -30] },
   { part: 'ram', set: 'exterior', prio: 2, at: { body: [35.25, 2.5, -2.62], follow: 'fairing' }, off: [40, 56] },
 
@@ -116,7 +116,7 @@ export const HOTSPOTS = [
   { part: 'battery', set: 'systems', prio: 2, at: { body: [33.25, 2.57, -1.05], follow: 's46' }, off: [50, 50], label: 'APU 电池' },
   { part: 'cacUnit', set: 'systems', prio: 1, at: { body: [22.9, 2.18, 0.72] }, off: [-50, 64] },
   { part: 'packs', set: 'systems', prio: 2, at: { body: [25.4, 2.1, 0.62] }, off: [30, 70] },
-  { part: 'cac', set: 'systems', prio: 2, at: { body: [22.35, 3.02, 2.7] }, off: [-64, -30] },
+  { part: 'cac', set: 'systems', prio: 2, at: { body: [22.45, 2.64, 2.42] }, off: [-64, -30] },
   { part: 'apu', set: 'systems', prio: 2, at: { body: [58.55, 5.8, 0], follow: 'tailcone' }, off: [30, -56] },
   { part: 'asg', set: 'systems', prio: 2, at: { body: [57.15, 5.33, 0.26], follow: 'tailcone' }, off: [-50, 50] },
   { part: 'ram', set: 'systems', prio: 2, at: { body: [35.25, 2.5, -2.62] }, off: [40, 56] },
