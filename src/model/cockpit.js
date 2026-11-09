@@ -3,7 +3,7 @@
 // 前风挡下缘为等高线（距机腹约 3.52 m），上缘 4.04→4.17 m；侧窗前高后低、向后收窄。
 import * as THREE from 'three';
 import { section, point, normal, FUS } from './fuselage.js';
-import { merge } from '../geom/build.js';
+import { merge, grid } from '../geom/build.js';
 import { clamp } from '../core/math.js';
 
 const _s = {};
@@ -144,6 +144,38 @@ export function windowGeometry(kind, side, grow = 0, offset = 0.01) {
   const quad = grow ? offsetPoly(def.quad, grow) : def.quad;
   const outline = roundedOutline(quad, def.r + grow);
   return surfaceWindow(outline, kind === 'front' ? frontMap(side) : sideMap(side), { offset });
+}
+
+/**
+ * 风挡内侧窗框（第一人称可见）：从窗洞边缘向内的窗框侧壁（深 depth）+ 平行于蒙皮的压边（宽 trim）+ 回到蒙皮的外沿。
+ * 压边盖住窗洞遮罩的栅格误差（遮罩约 9 mm/像素），窗洞看起来像有厚度的真实窗框。
+ */
+export function windowTrimGeometry({ depth = 0.05, trim = 0.045 } = {}) {
+  const P = new THREE.Vector3(), Nn = new THREE.Vector3(), geoms = [];
+  for (const side of [1, -1]) {
+    for (const kind of ['front', 'side']) {
+      const def = COCKPIT[kind];
+      const map = kind === 'front' ? frontMap(side) : sideMap(side);
+      const o0 = roundedOutline(def.quad, def.r), o1 = roundedOutline(offsetPoly(def.quad, trim), def.r + trim);
+      const ring = (o, d) => o.map(([a, b]) => { const [s, t] = map(a, b); point(s, t, P); normal(s, t, Nn); return P.clone().addScaledVector(Nn, -d); });
+      const rows = [ring(o0, 0.002), ring(o0, depth), ring(o1, depth), ring(o1, 0.002)];
+      geoms.push(grid(4, o0.length, (i, j, out) => out.copy(rows[i][j]), { closeCols: true }));
+    }
+  }
+  return merge(geoms);
+}
+
+/** 4 块风挡玻璃轮廓在机身参数平面 (s, t) 上的折线：第一人称时蒙皮内表面据此开出窗洞 */
+export function windowOutlinesST() {
+  const out = [];
+  for (const side of [1, -1]) {
+    for (const kind of ['front', 'side']) {
+      const def = COCKPIT[kind];
+      const map = kind === 'front' ? frontMap(side) : sideMap(side);
+      out.push(roundedOutline(def.quad, def.r).map(([a, b]) => map(a, b)));
+    }
+  }
+  return out;
 }
 
 export function buildCockpitWindows(M) {

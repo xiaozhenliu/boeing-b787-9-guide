@@ -21,7 +21,8 @@ export const PRESETS = [
   { id: 'gear', label: '主起落架', eye: [40.5, 1.6, 12.5], look: [31.0, 1.6, 4.4] }, // 自后外侧低位看主起落架（避开发动机遮挡）
   { id: 'wing', label: '机翼', eye: [44, 21, 33], look: [31, 4.5, 14] },
   { id: 'tail', label: '尾翼', eye: [76, 15, 26], look: [55, 9, 0] },
-  { id: 'cockpit', label: '驾驶舱', eye: [2.95, 5.72, 0.53], look: [-30, 4.6, 0.53], inside: true },
+  // 驾驶舱：观察员位置（两名飞行员身后、中线上），视线下俯 15°，5 块显示器、HUD、MCP 与油门台同在画面内
+  { id: 'cockpit', label: '驾驶舱', eye: [3.5, 5.9, 0], look: [-29.5, -6.11, 0], inside: true }, // 中央观察员座位，俯视 20°：风挡、遮光罩、5 块屏与油门台同框
   { id: 'cabin', label: '客舱', eye: [16.4, 6.45, 0.95], look: [60, 6.0, 0.95], inside: true, cabin: true },
 ];
 
@@ -33,7 +34,7 @@ export class Rig {
     this.onPreset = null; // (preset) => void
     this.onInside = null; // (inside) => void
     this.defaults = { near: app.camera.near, minD: app.controls.minDistance, maxPolar: app.controls.maxPolarAngle };
-    app.controls.addEventListener('start', () => { this.tween = null; });
+    app.controls.addEventListener('start', () => { this.endTween(); });
   }
 
   /** 平滑飞到世界坐标机位 */
@@ -44,7 +45,9 @@ export class Rig {
     const p1 = pos.clone(), t1 = target.clone();
     // 远距离飞行时抬高中段弧线，避免穿过机身
     const lift = Math.min(p0.distanceTo(p1) * 0.12, 18) * (inside ? 0 : 1);
-    this.tween = { t: 0, dur, p0, p1, t0, t1, lift };
+    // 视场角随飞行过渡（舱外 32° ↔ 第一人称 58°），避免进出驾驶舱时画面突跳
+    const f0 = camera.fov, f1 = this.app.fovFor ? this.app.fovFor(camera.aspect, inside) : f0;
+    this.tween = { t: 0, dur, p0, p1, t0, t1, lift, f0, f1 };
     return new Promise((res) => { this.tween.done = res; });
   }
 
@@ -58,6 +61,14 @@ export class Rig {
     if (p.inside) look = eye.clone().add(look.sub(eye).normalize().multiplyScalar(0.35));
     this.onPreset?.(p);
     return this.fly(eye, look, { dur: opts.dur ?? (p.inside ? 2.0 : 1.6), inside: !!p.inside });
+  }
+
+  /** 中止当前飞行（用户开始拖动时），视场角直接取目标值 */
+  endTween() {
+    const tw = this.tween;
+    if (!tw) return;
+    this.tween = null;
+    if (tw.f0 !== tw.f1) { this.app.camera.fov = tw.f1; this.app.camera.updateProjectionMatrix(); }
   }
 
   /** 竖屏（手机）时把舱外机位沿视线拉远，整机不被左右裁掉（原地修改 eye） */
@@ -113,6 +124,7 @@ export class Rig {
     camera.position.lerpVectors(tw.p0, tw.p1, k);
     camera.position.y += Math.sin(Math.PI * k) * tw.lift;
     controls.target.lerpVectors(tw.t0, tw.t1, k);
+    if (tw.f0 !== tw.f1) { camera.fov = tw.f0 + (tw.f1 - tw.f0) * k; camera.updateProjectionMatrix(); }
     if (tw.t >= 1) { this.tween = null; tw.done?.(); }
   }
 }

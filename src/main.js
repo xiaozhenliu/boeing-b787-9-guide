@@ -5,6 +5,7 @@ import { createEnvironment } from './render/env.js';
 import { createMaterials } from './render/materials.js';
 import { createFuselageTextures } from './render/textures.js';
 import { createTailTexture } from './render/tailTexture.js';
+import { createCockpitTextures, createCockpitMask } from './render/cockpitTextures.js';
 import { Aircraft } from './model/aircraft.js';
 
 const params = new URLSearchParams(location.search);
@@ -33,24 +34,33 @@ controls.maxPolarAngle = Math.PI * 0.495;
 controls.update();
 
 const env = createEnvironment(renderer, scene);
-const tex = { fus: createFuselageTextures(quality), tail: createTailTexture() };
+const tex = { fus: createFuselageTextures(quality), tail: createTailTexture(), cockpit: { ...createCockpitTextures(quality), mask: createCockpitMask() } };
+for (const t of [tex.cockpit.atlas, tex.cockpit.panels]) t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 const M = createMaterials(tex);
 const aircraft = new Aircraft(M);
 scene.add(aircraft.root);
 
+/**
+ * 垂直视场角。舱外：横屏 32°（接近长焦的“产品照”透视），竖屏加大到能容下整机；
+ * 第一人称：横屏 58°（水平约 85°，接近人眼余光范围），竖屏保证水平方向至少约 50°。
+ */
+function fovFor(aspect, inside) {
+  const deg = (r) => (r * 180) / Math.PI, rad = (d) => (d * Math.PI) / 180;
+  if (inside) return aspect >= 1 ? 58 : Math.min(85, Math.max(58, deg(2 * Math.atan(Math.tan(rad(26)) / aspect))));
+  return aspect >= 1 ? 32 : Math.min(58, deg(2 * Math.atan((Math.tan(rad(16)) * 0.78) / aspect)));
+}
 function resize() {
   const w = window.innerWidth, h = window.innerHeight;
   renderer.setSize(w, h);
   camera.aspect = w / h;
-  // 竖屏时加大垂直视场角，让水平方向也能容下整机（横屏保持 32°）
-  camera.fov = camera.aspect >= 1 ? 32 : Math.min(58, (2 * Math.atan((Math.tan((16 * Math.PI) / 180) * 0.78) / camera.aspect) * 180) / Math.PI);
+  camera.fov = fovFor(camera.aspect, !!app.ui?.rig?.insideMode);
   camera.updateProjectionMatrix();
   app.onResize?.(w, h);
 }
 window.addEventListener('resize', resize);
 
 const timer = new THREE.Timer();
-const app = { renderer, scene, camera, controls, env, M, aircraft, THREE, quality, tickers: [(dt) => aircraft.tick(dt)] };
+const app = { renderer, scene, camera, controls, env, M, aircraft, THREE, quality, fovFor, tickers: [(dt) => aircraft.tick(dt)] };
 window.__app = app;
 resize(); // 初始按窗口比例设定视场角
 

@@ -6,9 +6,14 @@ import { makeHoled } from './holes.js';
 export const CUT = {
   on: { value: 0 },
   color: { value: new THREE.Color('#c9d3dc') }, // 剖开后看到的蒙皮内表面（底漆色）
+  // 第一人称（驾驶舱/客舱）时：蒙皮背面画成内饰板颜色，并按风挡轮廓开出窗洞
+  inside: { value: 0 },
+  lining: { value: new THREE.Color().setRGB(0.8, 0.825, 0.85) }, // 直接写入输出（不经色调映射），按显示值取色
+  winMask: { value: null },
+  winScale: { value: 1 },
 };
 
-/** 让材质在剖切时以醒目颜色显示背面，形成“实心截面”的视觉 */
+/** 让材质在剖切时以醒目颜色显示背面，形成“实心截面”的视觉；第一人称时背面显示为内饰板 */
 export function makeCuttable(mat) {
   mat.side = THREE.DoubleSide;
   const prev = mat.onBeforeCompile;
@@ -16,12 +21,45 @@ export function makeCuttable(mat) {
     if (prev) prev(shader, r);
     shader.uniforms.uCutOn = CUT.on;
     shader.uniforms.uCutColor = CUT.color;
-    shader.fragmentShader = 'uniform float uCutOn;\nuniform vec3 uCutColor;\n' + shader.fragmentShader.replace(
+    shader.uniforms.uInside = CUT.inside;
+    shader.uniforms.uLining = CUT.lining;
+    shader.fragmentShader = 'uniform float uCutOn;\nuniform vec3 uCutColor;\nuniform float uInside;\nuniform vec3 uLining;\n' + shader.fragmentShader.replace(
       '#include <dithering_fragment>',
-      '#include <dithering_fragment>\n  if (!gl_FrontFacing) { gl_FragColor = uCutOn > 0.5 ? vec4(uCutColor * (0.42 + 0.5 * clamp(normal.z, 0.0, 1.0)), 1.0) : vec4(gl_FragColor.rgb * 0.25, 1.0); }',
+      `#include <dithering_fragment>
+  if (!gl_FrontFacing) {
+    if (uInside > 0.5) gl_FragColor = vec4(uLining * (0.62 + 0.38 * clamp(normal.z, 0.0, 1.0)), 1.0);
+    else gl_FragColor = uCutOn > 0.5 ? vec4(uCutColor * (0.42 + 0.5 * clamp(normal.z, 0.0, 1.0)), 1.0) : vec4(gl_FragColor.rgb * 0.25, 1.0);
+  }`,
     );
   };
   mat.customProgramCacheKey = () => 'cuttable';
+  return mat;
+}
+
+/**
+ * 机身漆面专用：第一人称时，蒙皮背面落在风挡遮罩（机头展开图）白色区域内的片元直接丢弃，
+ * 于是从舱内透过窗洞能看到外景。遮罩 u = s / MASK_S = 机身 u × winScale。
+ * 着色器与普通可剖切材质不同，必须使用不同的程序缓存键，否则会被共用的已编译程序顶替。
+ */
+function makeLined(mat) {
+  const prev = mat.onBeforeCompile;
+  mat.onBeforeCompile = (shader, r) => {
+    if (prev) prev(shader, r);
+    shader.uniforms.uWinMask = CUT.winMask;
+    shader.uniforms.uWinScale = CUT.winScale;
+    shader.fragmentShader = 'uniform sampler2D uWinMask;\nuniform float uWinScale;\n' + shader.fragmentShader.replace(
+      'void main() {',
+      `void main() {
+  #ifdef USE_MAP
+  if (uInside > 0.5 && !gl_FrontFacing) {
+    vec2 wm = vec2(vMapUv.x * uWinScale, vMapUv.y);
+    if (wm.x < 1.0 && texture2D(uWinMask, wm).r > 0.5) discard;
+  }
+  #endif`,
+    );
+  };
+  const key = mat.customProgramCacheKey ? mat.customProgramCacheKey() : '';
+  mat.customProgramCacheKey = () => key + '-lined';
   return mat;
 }
 
@@ -67,7 +105,8 @@ export function createMaterials(tex) {
     color: 0xffffff, map: tex.fus.map, bumpMap: tex.fus.bumpMap, bumpScale: 1.2,
     roughness: 0.3, metalness: 0.0, clearcoat: 0.65, clearcoatRoughness: 0.14,
   };
-  M.paint = makeHoled(makeCuttable(phys(paintOpts))); // 机身蒙皮/整流罩：支持起落架舱开洞
+  M.paint = makeLined(makeHoled(makeCuttable(phys(paintOpts)))); // 机身蒙皮/整流罩：支持起落架舱开洞、第一人称风挡窗洞
+  if (tex.cockpit?.mask) { CUT.winMask.value = tex.cockpit.mask.tex; CUT.winScale.value = tex.cockpit.mask.scale; }
   M.panel = makeCuttable(phys(paintOpts)); // 舱门面板：同一涂装纹理，但不开洞
   M.white = makeCuttable(phys({ color: 0xf2f4f6, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.15 }));
   M.radome = makeCuttable(phys({ color: 0xeef1f4, roughness: 0.36, clearcoat: 0.45, clearcoatRoughness: 0.2 }));
@@ -127,7 +166,23 @@ export function createMaterials(tex) {
   M.cabinWall = std({ color: 0xe9edf2, roughness: 0.85, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
   M.bin = std({ color: 0xf4f6f8, roughness: 0.6 });
   M.container = std({ color: 0xaab4bf, metalness: 0.6, roughness: 0.45, side: THREE.DoubleSide });
-  M.screen = std({ color: 0x0b1626, emissive: 0x2a6fd0, emissiveIntensity: 0.55, roughness: 0.2 }); // 驾驶舱显示器
+  M.screen = std({ color: 0x0b1626, emissive: 0x2a6fd0, emissiveIntensity: 0.55, roughness: 0.2 }); // 客舱娱乐屏
+  // —— 驾驶舱（图集由 render/cockpitTextures.js 程序化绘制）——
+  const ck = tex.cockpit || {};
+  M.fdBody = std({ color: 0x2b3037, roughness: 0.62, metalness: 0.15, side: THREE.DoubleSide }); // 仪表板、操纵台壳体
+  M.fdGlare = std({ color: 0x15181c, roughness: 0.93, side: THREE.DoubleSide }); // 遮光罩顶面（防眩哑光黑）
+  M.fdDisplay = std({ color: 0x000000, emissive: 0xffffff, emissiveMap: ck.atlas || null, emissiveIntensity: 1.0, roughness: 0.3, metalness: 0 }); // 液晶屏
+  M.fdMcp = std({ color: 0xffffff, map: ck.atlas || null, emissive: 0xffffff, emissiveMap: ck.atlas || null, emissiveIntensity: 0.14, roughness: 0.6, metalness: 0.1 });
+  M.fdPanel = std({ color: 0xffffff, map: ck.panels || null, emissive: 0xffffff, emissiveMap: ck.panels || null, emissiveIntensity: 0.14, roughness: 0.62, metalness: 0.1 });
+  M.fdHud = new THREE.MeshBasicMaterial({ map: ck.atlas || null, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+  M.fdHudGlass = phys({ color: 0xa8f0cc, transparent: true, opacity: 0.12, roughness: 0.04, metalness: 0, depthWrite: false, side: THREE.DoubleSide });
+  M.fdSeat = std({ color: 0x30353c, roughness: 0.78 });
+  M.fdKnob = std({ color: 0x1a1d21, roughness: 0.38, metalness: 0.35 });
+  M.fdLever = std({ color: 0xe4e7ea, roughness: 0.4, metalness: 0.1 });
+  M.fdYoke = std({ color: 0x2b2e33, roughness: 0.48, metalness: 0.3 });
+  M.fdLining = std({ color: 0xc9cfd6, roughness: 0.86, side: THREE.DoubleSide });
+  M.fdDoor = std({ color: 0x8c959d, roughness: 0.55, metalness: 0.25 });
+  M.fdCarpet = std({ color: 0x3a4250, roughness: 0.96 });
   M.carpet = std({ color: 0x55607a, roughness: 0.95 });
   M.galley = std({ color: 0xc9cfd6, metalness: 0.3, roughness: 0.5 });
 

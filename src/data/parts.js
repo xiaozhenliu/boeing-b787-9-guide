@@ -17,9 +17,17 @@
 //   英国 AAIB G-ZBJB 调查报告（前起落架构造）：https://assets.publishing.service.gov.uk/media/6346baf78fa8f53465d139bb/Boeing_787-8_G-ZBJB_12-22.pdf
 //   GE Aerospace GEnx：https://www.geaerospace.com/commercial/aircraft-engines/genx
 //   罗罗 Trent 1000：https://www.rolls-royce.com/products-and-services/civil-aerospace/widebody/trent-1000.aspx
-//   普惠 APS5000：https://www.prattwhitney.com/en/products/auxiliary-power-units/aps5000
+//   GE 2015 新闻稿（叶片 22→18 片、复合材料机匣减重、CFAN）：https://www.geaerospace.com/news/press-releases/commercial-engines/ges-composite-fan-blade-revolution-turns-20-years-old
+//   普惠 APS5000（单轴变转速、450 kVA、43,100 ft）：https://www.rtx.com/en/prattwhitney/products/commercial-auxiliary-power-units
 //   赛峰 787（起落架 / 电刹车）：https://web.safran-group.com/safran-on-board/en/boeing-787-dreamliner.html
 //                                https://www.safran-group.com/products-services/boeing-787-dreamliner-electric-brake
+//   波音 2004-03-04 选定 Messier-Dowty：https://boeing.mediaroom.com/2004-03-04-Boeing-Names-Snecmas-Messier-Dowty-to-7E7-Team
+//   罗克韦尔柯林斯 787 驾驶舱显示（2009 首飞稿）：https://www.airframer.com/news_story.html?release=6973
+//   Gentex 首批 787 调光窗（2007）：https://www.globenewswire.com/news-release/2007/10/03/930845/0/en/gentex-ships-first-dimmable-aircraft-window-shades-to-ppg-aerospace-for-new-boeing-787-dreamliner.html
+//   Jamco 2025 新闻稿（自述为 787 盥洗室、厨房唯一供应商；赛峰官网另列有 787 厨房）：https://jamco-america.com/2025/08/04/jamco-corporation-announces-new-executive-appointments-to-accelerate-growth/
+//   波音温尼伯（主起落架舱门）：https://www.aero-mag.com/boeing-composite-manufacturing-centre
+//   CompositesWorld（787 隔框与剪切角片、机身长桁与蒙皮共固化）：https://www.compositesworld.com/articles/boeing-sets-pace-for-composite-usage-in-large-civil-aircraft
+//   CompositesWorld Spirit 41 段工厂参观（长桁装入芯模后与蒙皮共固化）：https://www.compositesworld.com/articles/the-first-composite-fuselage-section-for-the-first-composite-commercial-jet
 //   波音新闻稿：2007-03-14 首个垂尾 https://boeing.mediaroom.com/2007-03-14-Boeing-Rolls-Out-First-787-Vertical-Fin
 //               2007-05-11 机身段交付 https://boeing.mediaroom.com/2007-05-11-Fuselage-Sections-for-Boeing-787-Dreamliner-Delivered-to-Everett
 //               2007-05-16 最后一个大部件交付 https://boeing.mediaroom.com/2007-05-16-Final-Major-Structure-for-Boeing-787-Dreamliner-Delivered-to-Everett
@@ -36,9 +44,13 @@
 //   盐湖城参与 787-9 平尾生产：https://www.flightglobal.com/boeing-tasks-salt-lake-alenia-with-787-9-horizontal-stabiliser-production/104693.article
 //   大韩航空航空航天事业部产品目录：https://aerospace.koreanair.com
 //   萨博 787 货舱门：https://www.saab.com/newsroom/press-releases/2005/saab-and-boeing-signs-contract-for-787-dreamliner
+//                    https://boeing.mediaroom.com/2005-10-17-Boeing-Selects-Saab-Aerostructures-for-787-Cargo-Door-Package
+//                    https://www.saab.com/globalassets/products/aeronautics/aerostructures/aerostructures-folder.pdf
 //   Latécoère 787 舱门：https://www.latecoere.aero/en/500th-787-painted-livery-air-france/
 //   美铝钛合金座椅滑轨（2015）：https://news.alcoa.com/press-releases/press-release-details/2015/Alcoa-Announces-Multiyear-Supply-Contracts-with-Boeing-Valued-at-More-Than-2.5-Billion/default.aspx
 //   Saint-Gobain 石英纤维雷达罩：https://www.advanced-ceramic-composites.saint-gobain.com/news/using-quartz-fiber-aerospace-radomes
+//                                https://modstore.aero/modification/saint-gobain-performance-plastics-corp-installation-of-norton-radome-b787-dreamliner-2
+//   波音接收 Spirit 威奇托、塔尔萨等业务：https://www.okcommerce.gov/boeing-completes-acquisition-of-spirit-aerosystems/
 
 export const CATEGORIES = { fuselage: '机身', wing: '机翼', tail: '尾翼', engine: '发动机', gear: '起落架', structure: '内部结构', cabin: '客舱与货舱', systems: '系统与舱门' };
 
@@ -47,13 +59,13 @@ export const PARTS = {
   radome: {
     name: '雷达罩', en: 'Radome', cat: 'fuselage',
     summary: '机头最前端的透波罩，里面装着气象雷达天线。',
-    body: '雷达罩是机头最前端的整流罩，里面安装气象雷达等天线，同时构成机头的流线外形。它必须让雷达波顺利穿过，所以不能使用导电、会屏蔽电磁波的碳纤维，而是采用石英纤维等透波复合材料。雷达罩后面就是前压力隔板，隔板之前的这一小段不增压。据 Saint-Gobain 资料，787 的雷达罩由其用 Quartzel 石英纤维制造，直径约 2.2 m。',
+    body: '雷达罩是机头最前端的整流罩，里面安装气象雷达等天线，同时构成机头的流线外形。它必须让雷达波顺利穿过，所以不能使用导电、会屏蔽电磁波的碳纤维，而是采用石英纤维等透波复合材料。雷达罩后面就是前压力隔板，隔板之前的这一小段不增压。据 Saint-Gobain 2016 年前后的资料，787 的雷达罩由其美国俄亥俄州工厂用 Quartzel 石英纤维制造、经 Spirit AeroSystems 供应，直径约 2.2 m。',
     facts: [['材料', '石英纤维复合材料'], ['直径', '约 2.2 m（7 ft）'], ['供应商', 'Saint-Gobain（2016 年前后资料）'], ['增压', '不增压（位于前压力隔板之前）']],
   },
   s41: {
     name: '41 段（机头）', en: 'Section 41', cat: 'fuselage',
     summary: '机头筒段，包含驾驶舱、风挡、1 号门和前起落架舱。',
-    body: '41 段是紧接雷达罩的机头筒段，由碳纤维复合材料制成。驾驶舱及其风挡、1 号门和前起落架舱都在这一段，按波音 2007 年的介绍，它交付时已包含驾驶舱、风挡、舱门和航电设备。它由 Spirit AeroSystems 在美国堪萨斯州威奇托制造，再空运到总装线。2025 年 12 月波音完成对 Spirit 的收购，威奇托工厂现已归入波音。',
+    body: '41 段是紧接雷达罩的机头筒段，驾驶舱、风挡、1 号门和前起落架舱都在这一段。它由 Spirit AeroSystems 在美国堪萨斯州威奇托用碳纤维复合材料制造，按波音 2007 年的新闻稿，首件运抵总装线时前起落架已经装好。当时公布的 787-8 41 段长约 12.8 m（42 ft）。2025 年 12 月波音完成对 Spirit 的收购，威奇托工厂现已归入波音。',
     facts: [['制造', 'Spirit AeroSystems 威奇托（2025 年 12 月起属波音）'], ['长度', '约 12.8 m（42 ft，787-8，波音 2007 年数据）'], ['包含', '驾驶舱、风挡、1 号门、前起落架舱'], ['材料', '碳纤维复合材料']],
   },
   s43: {
@@ -65,7 +77,7 @@ export const PARTS = {
   s44: {
     name: '44 段（中机身）', en: 'Section 44', cat: 'fuselage',
     summary: '机翼所在位置的中机身筒段，由意大利 Leonardo 制造。',
-    body: '44 段是机翼所在位置的中机身筒段，中央翼盒从它的下部横穿而过。它由意大利 Leonardo（原 Alenia Aermacchi）在格罗塔列工厂制造，隔框和剪切角片来自该公司的波米利亚诺工厂。翼盒占据了这一段的下层空间，所以前货舱在翼盒前方，后货舱在翼盒和主起落架舱后方。Leonardo 称其在 787 上的工作量（含 46 段和水平尾翼）约占机体结构的 14%。',
+    body: '44 段是机翼所在位置的中机身筒段，中央翼盒从它的下部横穿而过。它由意大利 Leonardo（原 Alenia Aermacchi）在格罗塔列工厂制造，该公司还在波米利亚诺工厂生产 787 的隔框和剪切角片。翼盒占据了这一段的下层空间，所以前货舱在翼盒前方，后货舱在翼盒和主起落架舱后方。Leonardo 称其在 787 上的工作量（含 46 段和水平尾翼）约占机体结构的 14%。',
     facts: [['制造', 'Leonardo（意大利格罗塔列）'], ['隔框与剪切角片', 'Leonardo 波米利亚诺工厂'], ['Leonardo 份额', '约占 787 机体结构 14%（含 46 段和平尾）']],
   },
   s46: {
@@ -95,7 +107,7 @@ export const PARTS = {
   windows: {
     name: '客舱舷窗', en: 'Cabin Windows', cat: 'fuselage',
     summary: '约 27×47 cm 的大舷窗，用按钮电子调暗，没有遮光板。',
-    body: '787 的客舱舷窗约 27×47 cm，波音称它是现役宽体客机中最大的舷窗。复合材料机身让窗户可以开得比铝机身更大。窗户没有塑料遮光板，而是在玻璃之间夹了一层电致变色材料，按下窗下的按钮就能让窗户逐渐变暗。这套调光窗由 PPG 航宇（Alteos 系列）与 Gentex 合作提供，波音 2006 年预计其使用寿命超过 20 年。',
+    body: '787 的客舱舷窗约 27×47 cm，波音称它是现役宽体客机中最大的舷窗。复合材料机身让窗户可以开得比铝机身更大。窗户没有塑料遮光板，而是在玻璃之间夹了一层电致变色材料，按下窗下的按钮就能让窗户逐渐变暗，乘务员也可以一键调节整个客舱的舷窗。这套调光窗由 PPG 航宇（Alteos 系列）与 Gentex 合作提供，波音 2006 年预计其使用寿命超过 20 年。',
     facts: [['尺寸', '约 27 × 47 cm（10.7 × 18.4 in）'], ['调光', '电致变色，按钮控制'], ['技术来源', 'Gentex；PPG 航宇 Alteos 系列'], ['设计寿命', '20 年以上（波音 2006）']],
   },
   cockpit: {
@@ -113,8 +125,8 @@ export const PARTS = {
   fairing: {
     name: '翼身整流罩', en: 'Wing-to-Body Fairing', cat: 'fuselage',
     summary: '机翼与机身交界处的大整流罩，减小干扰阻力。',
-    body: '翼身整流罩包在机翼根部与机身的交界处，把两者之间的拐角修整成平滑曲面，减小气流干扰带来的阻力。整流罩内部空间很大，容纳空调组件、液压设备和起落架相关部件，波音救援资料标出右侧整流罩内有一个液压油箱。模型中座舱空气压缩机进气口、冲压空气涡轮和防撞灯也画在整流罩上。整流罩由波音温尼伯工厂（加拿大）制造，据波音 2013 年资料，部分壁板由中国哈飞制造。',
-    facts: [['制造', '波音温尼伯（加拿大）'], ['部分壁板', '哈飞（波音 2013 年资料）'], ['材料', '复合材料（波音材料图列为“其他复合材料”）'], ['内部', '空调组件、液压油箱（右侧）等']],
+    body: '翼身整流罩包在机翼根部与机身的交界处，把两者之间的拐角修整成平滑曲面，减小气流干扰带来的阻力。整流罩内部空间很大，容纳空调组件和液压设备等，波音救援资料标出右侧整流罩内有一个液压油箱。模型中座舱空气压缩机进气口、着陆灯、冲压空气涡轮和机腹防撞灯也画在整流罩上。整流罩由波音温尼伯工厂（加拿大）制造，据波音 2005 年和 2013 年的资料，部分壁板由中国哈飞制造。',
+    facts: [['制造', '波音温尼伯（加拿大）'], ['部分壁板', '哈飞（波音 2005、2013 年资料）'], ['材料', '复合材料（波音材料图列为“其他复合材料”）'], ['内部', '空调组件、液压油箱（右侧）等']],
   },
 
   // ───────────── 机翼 ─────────────
@@ -205,19 +217,19 @@ export const PARTS = {
   ribs: {
     name: '翼肋', en: 'Wing Ribs', cat: 'wing',
     summary: '横跨前后梁的翼肋，保持翼型并把油箱分隔成段。',
-    body: '翼肋沿弦向布置在前梁和后梁之间，像一排排“肋骨”，保持机翼的翼型截面，并把蒙皮上的气动载荷传给翼梁。部分翼肋同时是油箱的隔板，把燃油分成若干舱段，限制燃油的晃动。FAA 2014 年报告的结构图把翼肋从翼根向翼尖编号，从 4 号一直排到 36 号。',
-    facts: [['作用', '保持翼型、传递载荷、分隔油箱'], ['编号（FAA 图示）', '4 号（翼根）至 36 号（近翼尖）']],
+    body: '翼肋沿弦向布置在前梁和后梁之间，像一排排“肋骨”，保持机翼的翼型截面，并把蒙皮上的气动载荷传给翼梁。部分翼肋同时是油箱的隔板，把燃油分成若干舱段，限制燃油的晃动。FAA 2014 年报告的机翼油箱口盖示意图中，翼肋由翼根向翼尖依次编号，图上标出了 4 号到 36 号之间的多根翼肋。',
+    facts: [['作用', '保持翼型、传递载荷、分隔油箱'], ['编号（FAA 图示）', '由翼根向翼尖递增，图中标出 4 号至 36 号']],
   },
   wingStringers: {
     name: '翼盒长桁', en: 'Wing Stringers', cat: 'wing',
-    summary: '沿翼展方向加强蒙皮的长桁，与蒙皮共固化成一体。',
-    body: '长桁是沿翼展方向排列在上下蒙皮内侧的细长加强条，防止蒙皮在受压时失稳起皱。787 的复合材料长桁与蒙皮在热压罐中共固化成一体，省去了大量紧固件。三菱重工的长桁在下关工厂制造，翼盒壁板在名古屋一台约 8 m × 40 m 的大型热压罐中固化。',
-    facts: [['材料', '碳纤维复合材料'], ['工艺', '与蒙皮共固化'], ['长桁制造', '三菱重工下关工厂'], ['热压罐', '约 8 m × 40 m（名古屋）']],
+    summary: '沿翼展方向加强蒙皮的复合材料长桁，防止蒙皮受压起皱。',
+    body: '长桁是沿翼展方向排列在上下蒙皮内侧的细长加强条，防止蒙皮在受压时失稳起皱。787 的翼盒长桁也用碳纤维复合材料制成，与蒙皮组成加筋壁板。三菱重工 2006 年 4 月在山口县的下关造船所建成了生产复合材料蒙皮长桁的工厂；翼盒的复合材料零件则在名古屋新建的成型工厂中固化，那里配备了世界最大级的热压罐。',
+    facts: [['材料', '碳纤维复合材料'], ['作用', '加强蒙皮，防止受压失稳'], ['长桁制造', '三菱重工下关造船所（2006 年 4 月建成）'], ['热压罐', '世界最大级之一（三菱重工 2007）']],
   },
   mainTank: {
     name: '主油箱', en: 'Main Fuel Tanks', cat: 'wing',
     summary: '左右翼盒内的主油箱，每侧可装约 20,895 L 燃油。',
-    body: '787 的机翼不另装油囊，密封好的翼盒本身就是油箱，前后梁、翼肋和上下蒙皮围成储油空间。按 EASA 型号合格证数据单，787-9 左右主油箱各可装 20,895 L（5,520 US gal），加上中央油箱，全机可用燃油 126,356 L，约 101 t。机翼下表面有一排椭圆形检修口盖，发动机内侧的口盖采用钛合金，以抵御轮胎胎面或发动机转子碎片的冲击。碳纤维复合材料不像铝那样能迅速导走雷电电流，所以油箱蒙皮使用带绝缘帽的紧固件并铺设铜箔，防止雷击产生火花。',
+    body: '787 的机翼不另装油囊，密封好的翼盒本身就是油箱，前后梁、翼肋和上下蒙皮围成储油空间。按 EASA 型号合格证数据单，787-9 左右主油箱各可装 20,895 L（5,520 US gal），加上中央油箱，全机可用燃油 126,356 L，约 101 t。机翼下表面有一排椭圆形检修口盖，发动机内侧的口盖采用钛合金，专门用来抵御抛出的轮胎胎面碎片和小块发动机转子碎片。碳纤维复合材料不像铝那样能迅速导走雷电电流，所以油箱蒙皮使用带绝缘帽的紧固件并铺设铜箔，防止雷击产生火花。',
     facts: [['单侧容量', '20,895 L（5,520 US gal）'], ['全机可用燃油', '126,356 L（约 101 t）'], ['检修口盖', '椭圆形，约 25 × 46 cm（10 × 18 in）'], ['防冲击口盖', '发动机内侧为钛合金'], ['防雷', '绝缘帽紧固件 + 铜箔']],
   },
   surgeTank: {
@@ -255,7 +267,7 @@ export const PARTS = {
   apu: {
     name: '辅助动力装置（APU）', en: 'Auxiliary Power Unit (APS5000)', cat: 'tail',
     summary: '尾锥里的 APS5000 辅助动力装置，只发电、不供引气。',
-    body: '辅助动力装置（APU）是一台装在尾锥里的小型燃气涡轮，排气从机尾尖端排出。787-9 使用汉胜（Hamilton Sundstrand）设计的 APS5000，EASA 型号合格证数据单注明它是“无引气 APU”：单轴、变转速，取消了传统 APU 向飞机供气的负载压气机。它驱动两台 225 kVA 起动发电机，在地面为飞机供电并用电力起动主发动机，可在 43,100 ft 以下起动和运行。普惠称它是业界首个用于大型民航客机的全电 APU。',
+    body: '辅助动力装置（APU）是一台装在尾锥里的小型燃气涡轮，排气从机尾尖端排出。787-9 使用汉胜（Hamilton Sundstrand）设计、现属普惠的 APS5000，普惠介绍它是单轴、变转速的燃气涡轮，海平面可发出 450 kVA 电力，并能在 43,100 ft 以下起动和运行。EASA 型号合格证数据单把它注明为“无引气 APU”，它不向飞机提供压缩空气，只驱动两台 225 kVA 起动发电机。在地面，它为飞机供电，并用电力起动主发动机。普惠称它是业界首个用于大型民航客机的全电 APU。',
     facts: [['型号', 'APS5000（汉胜设计，现属普惠）'], ['输出', '2 × 225 kVA，海平面共 450 kVA'], ['引气', '无（EASA TCDS 注明 no bleed-air）'], ['起动与工作高度', '43,100 ft 以下']],
   },
   apuDoor: {
@@ -294,7 +306,7 @@ export const PARTS = {
     name: '风扇机匣', en: 'Fan Case', cat: 'engine',
     summary: '包住风扇的复合材料机匣，能挡住断裂飞出的叶片。',
     body: '风扇机匣是包围风扇叶片的大圆环，最重要的任务是“包容”：万一叶片断裂，碎片必须被挡在机匣内，不能击穿短舱伤及机身。进气道安装在机匣前端，机匣外面再罩上风扇罩。GE 称 GEnx 是世界上第一款风扇叶片和前风扇机匣都采用碳纤维复合材料的民用发动机，复合材料机匣进一步减轻了重量。',
-    facts: [['材料', '碳纤维复合材料（GEnx）'], ['作用', '包容断裂叶片'], ['GE 称', '首款风扇叶片和前风扇机匣均为复合材料的民用发动机']],
+    facts: [['材料', '碳纤维复合材料（GEnx）'], ['作用', '包容断裂叶片'], ['GE 称', '首款风扇叶片和前风扇机匣均为复合材料的民用发动机'], ['减重', '复合材料机匣使发动机减重近 400 lb（约 180 kg，GE）']],
   },
   reverser: {
     name: '反推装置', en: 'Thrust Reverser', cat: 'engine',
@@ -311,8 +323,8 @@ export const PARTS = {
   exhaust: {
     name: '核心喷管与排气锥', en: 'Core Nozzle & Exhaust Plug', cat: 'engine',
     summary: '核心机喷管和中心排气锥，排出高温燃气。',
-    body: '核心机喷管位于发动机最后端，内部的中心排气锥（尾锥）和外侧喷管围成环形通道，把涡轮排出的高温燃气加速向后喷出。它要长期承受数百摄氏度的燃气，因此用耐高温合金制造。外涵的冷空气在外围包裹着这股热燃气，两者速度差越小，混合产生的噪声越低。',
-    facts: [['组成', '核心喷管 + 中心排气锥'], ['材料', '耐高温合金'], ['降噪原理', '减小内外涵气流速度差']],
+    body: '核心机喷管位于发动机最后端，内部的中心排气锥（尾锥）和外侧喷管围成环形通道，把涡轮排出的高温燃气加速向后喷出。它要长期承受数百摄氏度的燃气，因此必须用耐高温材料制造。外涵的冷空气在外围包裹着这股热燃气，两者速度差越小，混合产生的噪声越低。',
+    facts: [['组成', '核心喷管 + 中心排气锥'], ['材料', '耐高温材料'], ['降噪原理', '减小内外涵气流速度差']],
   },
   spinner: {
     name: '整流锥', en: 'Spinner', cat: 'engine',
@@ -353,8 +365,8 @@ export const PARTS = {
   lpt: {
     name: '低压涡轮', en: 'Low-Pressure Turbine', cat: 'engine',
     summary: '7 级低压涡轮，通过低压轴驱动风扇和增压级。',
-    body: '低压涡轮位于高压涡轮之后，从燃气中继续提取能量，通过贯穿发动机中心的低压轴驱动风扇和增压级。GEnx-1B 的低压涡轮有 7 级，GE 介绍其中部分叶片采用钛铝合金，比传统镍基合金叶片轻，使发动机减重约 300 lb（约 136 kg）。罗罗 Trent 1000 则用 6 级低压涡轮驱动风扇，另有 1 级中压涡轮驱动中压压气机。',
-    facts: [['级数', '7 级（GEnx-1B）'], ['叶片材料', '部分为钛铝合金'], ['减重', '约 300 lb（约 136 kg，GE）'], ['Trent 1000', '6 级低压 + 1 级中压涡轮']],
+    body: '低压涡轮位于高压涡轮之后，从燃气中继续提取能量，通过贯穿发动机中心的低压轴驱动风扇和增压级。GEnx-1B 的低压涡轮有 7 级，GE 介绍其第 6、7 级叶片采用钛铝合金，比传统镍基合金叶片轻，使发动机减重约 300 lb（约 136 kg）。罗罗 Trent 1000 则用 6 级低压涡轮驱动风扇，另有 1 级中压涡轮驱动中压压气机。',
+    facts: [['级数', '7 级（GEnx-1B）'], ['叶片材料', '第 6、7 级为钛铝合金（GE）'], ['减重', '约 300 lb（约 136 kg，GE）'], ['Trent 1000', '6 级低压 + 1 级中压涡轮']],
   },
   ogv: {
     name: '出口导向叶片', en: 'Outlet Guide Vanes (OGV)', cat: 'engine',
@@ -379,8 +391,8 @@ export const PARTS = {
   mainGear: {
     name: '主起落架', en: 'Main Landing Gear', cat: 'gear',
     summary: '两套四轮小车式主起落架，承担飞机绝大部分重量。',
-    body: '787 的两套主起落架各有一个四轮小车，主轮距 9.80 m，承担飞机绝大部分重量。起落架由赛峰起落系统（前身为 Messier-Dowty，2004 年 3 月中选）设计制造，787-9 型针对更大的重量做了加强，内筒采用钛合金。收起时，主起落架向机身方向收进机腹中部的主轮舱。波音 2006 年的材料占比图注明，约占结构重量 10% 的钢主要用于起落架。',
-    facts: [['构型', '2 套，各 4 轮小车'], ['主轮距', '9.80 m'], ['制造', '赛峰起落系统（原 Messier-Dowty）'], ['材料', '高强度钢，内筒为钛合金']],
+    body: '787 的两套主起落架各有一个四轮小车，主轮距 9.80 m，承担飞机绝大部分重量。起落架由赛峰起落系统（前身为 Messier-Dowty，2004 年 3 月中选）设计制造，赛峰称主起落架内筒等部分零件采用钛合金，这在业界属首次。收起时，主起落架向机身方向收进机腹中部的主轮舱。波音 2006 年的材料占比图注明，约占结构重量 10% 的钢主要用于起落架。',
+    facts: [['构型', '2 套，各 4 轮小车'], ['主轮距', '9.80 m'], ['制造', '赛峰起落系统（原 Messier-Dowty）'], ['材料', '高强度钢；内筒等部分零件为钛合金']],
   },
   gearDoors: {
     name: '起落架舱门', en: 'Landing Gear Doors', cat: 'gear',
@@ -417,8 +429,8 @@ export const PARTS = {
   frames: {
     name: '隔框', en: 'Fuselage Frames', cat: 'structure',
     summary: '一圈圈环形隔框撑起机身截面，名义间距约 61 cm。',
-    body: '隔框是机身内部一圈圈环形的骨架，维持机身的截面形状，并把蒙皮、地板和设备的载荷传开。波音救援资料给出 787 的隔框名义间距为 24 in（约 61 cm），方便救援人员确定破拆位置。787 的隔框采用碳纤维复合材料，通过剪切角片与蒙皮连接；Leonardo 的波米利亚诺工厂为 44、46 段生产隔框和剪切角片。',
-    facts: [['名义间距', '24 in（约 61 cm）'], ['材料', '碳纤维复合材料'], ['44/46 段隔框', 'Leonardo 波米利亚诺工厂']],
+    body: '隔框是机身内部一圈圈环形的骨架，维持机身的截面形状，并把蒙皮、地板和设备的载荷传开。波音救援资料给出 787 的隔框名义间距为 24 in（约 61 cm），方便救援人员确定破拆位置。据 CompositesWorld 的报道，787 的隔框大多采用树脂灌注的碳纤维复合材料，少数部位用钛合金或铝合金框，并通过复合材料剪切角片与蒙皮连接。Leonardo 在波米利亚诺工厂为 787 生产隔框和剪切角片。',
+    facts: [['名义间距', '24 in（约 61 cm）'], ['材料', '大多为碳纤维复合材料，少数为钛或铝合金'], ['供应商之一', 'Leonardo 波米利亚诺工厂']],
   },
   doorFrames: {
     name: '门框加强结构', en: 'Door Surrounds', cat: 'structure',
@@ -435,7 +447,7 @@ export const PARTS = {
   floorBeams: {
     name: '地板梁', en: 'Floor Beams', cat: 'structure',
     summary: '横跨机身的地板梁，承托客舱地板和座椅滑轨。',
-    body: '地板梁横跨在机身两侧的隔框之间，上面铺设座椅滑轨和地板面板，承受乘客、座椅和行李的重量。FAA 报告指出，787 的增压机身被客舱地板分成上下两层：上层是客舱，下层是货舱和电子设备舱。座椅滑轨沿纵向固定在地板梁上，航空公司可以沿滑轨调整座椅排距。',
+    body: '地板梁横跨在机身两侧的隔框之间，上面铺设座椅滑轨和地板面板，承受乘客、座椅和行李的重量。787 的增压机身被客舱地板分成上下两层：上层是客舱，下层是货舱和电子设备舱。座椅滑轨沿纵向固定在地板梁上，航空公司可以沿滑轨调整座椅排距。',
     facts: [['位置', '客舱地板下方，横跨隔框'], ['承载', '乘客、座椅、行李'], ['下方空间', '货舱、电子设备舱']],
   },
   cargoFloor: {
@@ -459,7 +471,7 @@ export const PARTS = {
   keel: {
     name: '龙骨梁', en: 'Keel Beam', cat: 'structure',
     summary: '机腹中线上的龙骨梁，在主轮舱开口处传递纵向载荷。',
-    body: '机身就像一根长梁，飞行和着陆时下半部要承受很大的拉力和压力。主轮舱在机腹开了一个大口，切断了这部分蒙皮和长桁，龙骨梁就沿机腹中线穿过轮舱，把前后机身的纵向载荷接续起来。模型中它位于机身中段下部、主轮舱所在的位置。',
+    body: '机身就像一根长梁，飞行和着陆时下半部要承受很大的拉力和压力。主轮舱在机腹开了一个大口，切断了这部分蒙皮和长桁，龙骨梁就沿机腹中线穿过轮舱，把前后机身的纵向载荷接续起来。模型中它是机身中段下部沿中线布置的一根纵梁。',
     facts: [['位置', '机腹中线，穿过主轮舱'], ['作用', '在轮舱开口处传递纵向载荷']],
   },
   bulkheads: {
@@ -509,8 +521,8 @@ export const PARTS = {
   galleys: {
     name: '厨房与盥洗室', en: 'Galleys & Lavatories', cat: 'cabin',
     summary: '舱门附近的厨房和盥洗室模块，可按航空公司需求布置。',
-    body: '厨房和盥洗室集中布置在舱门附近，以模块形式安装在地板的固定点上，航空公司可以根据航线和舱位需求选择数量和位置。厨房里有烤箱、冷藏设备和餐车停放位，盥洗室配有真空马桶。赛峰客舱（Safran Cabin）是 787 厨房和盥洗室的供应商之一。',
-    facts: [['位置', '各舱门附近'], ['厨房设备', '烤箱、冷藏设备、餐车位'], ['供应商之一', '赛峰客舱（Safran Cabin）']],
+    body: '厨房和盥洗室集中布置在舱门附近，以模块形式安装在地板的固定点上，航空公司可以根据航线和舱位需求选择数量和位置。厨房里有烤箱、冷藏设备和餐车停放位，盥洗室配有真空马桶。日本 Jamco 在 2025 年的新闻稿中称，它是 787 盥洗室、厨房以及驾驶舱门和驾驶舱隔墙的唯一供应商。赛峰官网的 787 供货清单里也写有赛峰客舱（Safran Cabin）为 787 提供厨房，但没有说明具体范围。',
+    facts: [['位置', '各舱门附近'], ['厨房设备', '烤箱、冷藏设备、餐车位'], ['Jamco（2025 年自述）', '787 盥洗室与厨房的唯一供应商'], ['赛峰官网', '也列有为 787 提供厨房']],
   },
   flightDeck: {
     name: '驾驶舱', en: 'Flight Deck', cat: 'cabin',
@@ -547,8 +559,8 @@ export const PARTS = {
   door1: {
     name: '1 号门', en: 'Door 1 (Type A)', cat: 'systems',
     summary: '距机头约 6.3 m 的 1 号门，A 型旅客门，左右各一。',
-    body: '1 号门是最前面的一对旅客门，位于驾驶舱后方，距机头约 6.3 m，常用于登机。按波音机场规划手册，它的净开口宽 50.5 in（约 1.28 m），比其余 3 对门略宽。所有旅客门都是带充气滑梯的 A 型应急出口，787 的旅客门由法国 Latécoère 制造。左侧 1 号门（1L）附近有通往选装的驾驶舱上方飞行机组休息舱的入口，舱内设 2 个铺位和 1 个座椅。',
-    facts: [['位置', '距机头约 6.3 m'], ['净开口宽度', '50.5 in（约 128 cm）'], ['类型', 'A 型旅客门'], ['制造', 'Latécoère（法国）']],
+    body: '1 号门是最前面的一对旅客门，位于驾驶舱后方，距机头约 6.3 m，常用于登机。按波音机场规划手册，它的净开口宽 50.5 in（约 1.28 m），比其余 3 对门略宽。所有旅客门都是带充气滑梯的 A 型应急出口；据 2017 年初的资料，787 的旅客门由法国 Latécoère 制造。按波音资料，左侧 1 号门（1L）附近有通往驾驶舱上方飞行机组休息舱的入口，这个选装的休息舱在典型布局中有 2 个铺位和 1 个座椅。',
+    facts: [['位置', '距机头约 6.3 m'], ['净开口宽度', '50.5 in（约 128 cm）'], ['类型', 'A 型旅客门'], ['制造', 'Latécoère（法国，2017 年初资料）']],
   },
   door2: {
     name: '2 号门', en: 'Door 2 (Type A)', cat: 'systems',
@@ -565,8 +577,8 @@ export const PARTS = {
   door4: {
     name: '4 号门', en: 'Door 4 (Type A)', cat: 'systems',
     summary: '距机头约 49.66 m 的 4 号门，是最后一对旅客门。',
-    body: '4 号门距机头约 49.66 m，是客舱最后部的一对旅客门，净开口宽 49.5 in（约 1.26 m），附近通常布置厨房和盥洗室。左侧 4 号门（4L）附近有通往客舱上方乘务员休息舱的入口，选装的休息舱内有 6 个铺位。它同样是带充气滑梯的 A 型出口。',
-    facts: [['位置', '距机头约 49.66 m'], ['净开口宽度', '49.5 in（约 126 cm）'], ['附近设施', '乘务员休息舱入口（选装，6 铺位）']],
+    body: '4 号门距机头约 49.66 m，是客舱最后部的一对旅客门，净开口宽 49.5 in（约 1.26 m），附近通常布置厨房和盥洗室。按波音资料，左侧 4 号门（4L）附近有通往客舱上方乘务员休息舱的入口，这个选装的休息舱在典型布局中有 6 个铺位。它同样是带充气滑梯的 A 型出口。',
+    facts: [['位置', '距机头约 49.66 m'], ['净开口宽度', '49.5 in（约 126 cm）'], ['附近设施', '乘务员休息舱入口（选装，典型 6 铺位）']],
   },
   fwdCargo: {
     name: '前货舱门', en: 'Forward Cargo Door', cat: 'systems',
@@ -607,7 +619,7 @@ export const PARTS = {
   ram: {
     name: '冲压空气涡轮（RAT）', en: 'Ram Air Turbine', cat: 'systems',
     summary: '应急时放出的冲压空气涡轮，靠迎面气流发电并驱动液压泵。',
-    body: '冲压空气涡轮（RAT）平时收在机身内（模型中位于翼身整流罩），在两台发动机都失去动力等紧急情况下自动放出，像风车一样被迎面气流吹转。波音资料显示，787 的 RAT 同时驱动一台发电机和一台液压泵，为飞控等关键系统提供应急电力和液压。它在空中放出后不能收回，要落地后由机务人员复位。RAT 由汉胜（Hamilton Sundstrand，今 Collins 宇航）提供。',
+    body: '冲压空气涡轮（RAT）平时收在机身内（模型中位于右侧翼身整流罩），在两台发动机都失去动力等紧急情况下自动放出，像风车一样被迎面气流吹转。波音资料显示，787 的 RAT 同时驱动一台发电机和一台液压泵，为飞控等关键系统提供应急电力和液压。它在空中放出后不能收回，要落地后由机务人员复位。RAT 由汉胜（Hamilton Sundstrand，今 Collins 宇航）提供。',
     facts: [['驱动设备', '发电机 + 液压泵（波音 AERO 2007）'], ['放出', '紧急情况下自动放出，空中不能收回'], ['供应商', '汉胜（今 Collins 宇航）']],
   },
   cac: {
@@ -619,7 +631,7 @@ export const PARTS = {
   landingLights: {
     name: '着陆灯', en: 'Landing Lights', cat: 'systems',
     summary: '起飞和着陆时照亮跑道的大功率着陆灯。',
-    body: '着陆灯是飞机上最亮的灯，起飞、进近和着陆时照亮前方跑道，同时让飞机在远处就能被看见。模型把它画在翼根前方的整流罩处。787 的着陆灯采用 HID（高强度气体放电）等新型光源，波音 2006 年称其寿命比传统灯长一个数量级，减少了换灯次数。',
+    body: '着陆灯是飞机上最亮的照明灯之一，起飞、进近和着陆时照亮前方跑道，同时让飞机在远处就能被看见。模型把它画在翼根前方的整流罩处。787 的着陆灯采用 HID（高强度气体放电）等新型光源，波音 2006 年称其寿命比传统灯长一个数量级，减少了换灯次数。',
     facts: [['使用时机', '起飞、进近、着陆'], ['光源', 'HID 等长寿命光源'], ['寿命', '比传统灯长约一个数量级（波音 2006）']],
   },
 };
@@ -662,25 +674,25 @@ export const SECTION_INFO = {
   radome: { name: '雷达罩', supplier: 'Saint-Gobain（2016 年前后资料）', desc: '石英纤维复合材料透波罩，罩住气象雷达天线。' },
   s41: { name: '41 段 · 机头', supplier: 'Spirit AeroSystems 威奇托（2025 年 12 月起属波音）', desc: '含驾驶舱、风挡、1 号门和前起落架舱；787-8 的 41 段长约 12.8 m。' },
   s43: { name: '43 段 · 前机身', supplier: '川崎重工（日本名古屋）', desc: '整段式碳纤维复合材料筒段，由 Dreamlifter 空运到总装线。' },
-  s44: { name: '44 段 · 中机身', supplier: 'Leonardo（意大利格罗塔列）', desc: '机翼所在位置的中机身筒段；隔框和剪切角片来自 Leonardo 波米利亚诺工厂。' },
+  s44: { name: '44 段 · 中机身', supplier: 'Leonardo（意大利格罗塔列）', desc: '机翼所在位置的中机身筒段；Leonardo 还在波米利亚诺生产 787 隔框和剪切角片。' },
   s46: { name: '46 段 · 中后机身', supplier: 'Leonardo（意大利格罗塔列）', desc: '机翼后方的筒段，开有客舱门和后货舱门门洞；Leonardo 称其 787 份额约占机体结构 14%。' },
   s47: { name: '47 段 · 后机身', supplier: '波音南卡罗来纳（原 Vought）', desc: '最后一个增压段，后端为后压力隔板；北查尔斯顿自 2021 年起承担全部 787 总装。' },
   s48: { name: '48 段 · 尾段', supplier: '波音南卡罗来纳（原 Vought）', desc: '不增压，承托垂尾和平尾。' },
   tailcone: { name: '尾锥', supplier: '大韩航空航空航天事业部（韩国釜山）', desc: '复合材料尾锥，内装 APU；该公司产品目录称为“787 Sec48 Aft Body”。' },
   s11: { name: '11 段 · 中央翼盒', supplier: '斯巴鲁（原富士重工，日本半田）', desc: '碳纤维复合材料中央翼盒，与 45 段集成后交付；2020 年 1 月交付第 1,000 件。' },
   s45: { name: '45 段 · 主起落架舱', supplier: '川崎重工制造，斯巴鲁集成', desc: '不增压的主轮舱；主轮舱后隔板由大韩航空航空航天事业部制造。' },
-  wing: { name: '机翼盒段', supplier: '三菱重工（日本名古屋）', desc: '碳纤维复合材料翼盒（梁、蒙皮、长桁），每侧约 30 m；长桁来自三菱重工下关工厂。' },
+  wing: { name: '机翼盒段', supplier: '三菱重工（日本名古屋）', desc: '碳纤维复合材料翼盒（梁、蒙皮、长桁），每侧约 30 m；长桁来自三菱重工下关造船所。' },
   fixedLE: { name: '机翼前缘（固定前缘 + 缝翼）', supplier: 'Spirit 塔尔萨（现属波音）/ 马来西亚梳邦（现属 CTRM）', desc: '2025 年 12 月波音收购 Spirit 时，梳邦工厂同日出售给马来西亚 CTRM。' },
   movableTE: { name: '机翼可动后缘', supplier: '波音澳大利亚（墨尔本）', desc: '襟翼、襟副翼和副翼采用树脂灌注加烘箱固化；模型把扰流板和襟翼支撑整流罩也归入此组，整流罩由大韩航空航空航天事业部制造。' },
   wingtip: { name: '斜削式翼尖', supplier: '大韩航空航空航天事业部（韩国）', desc: '碳纤维夹层结构，装有航行灯和频闪灯。' },
   hstab: { name: '水平尾翼', supplier: 'Leonardo 福贾 / 波音盐湖城', desc: '多梁、共固化复合材料扭力盒；波音盐湖城自 787-9 起参与生产，两地分工未见公开细节。' },
   vfin: { name: '垂直尾翼', supplier: '波音弗雷德里克森 / 盐湖城；方向舵：成飞', desc: '前缘由沈飞制造（波音 2013 年资料）；模型中尾翼内部的梁和肋也归入此组。' },
-  fairing: { name: '翼身整流罩', supplier: '波音温尼伯（加拿大）', desc: '部分壁板由哈飞制造（波音 2013 年资料）；温尼伯工厂还生产主起落架舱门。' },
+  fairing: { name: '翼身整流罩', supplier: '波音温尼伯（加拿大）', desc: '部分壁板由哈飞制造（波音 2005、2013 年资料）；温尼伯工厂还生产主起落架舱门。' },
   nacelle: { name: '短舱与反推', supplier: 'Collins 宇航（原古德里奇）', desc: '两型发动机的短舱和叶栅式反推装置均由其提供。' },
   engine: { name: '发动机', supplier: 'GE GEnx-1B 或罗罗 Trent 1000', desc: '航空公司二选一；模型按 GEnx-1B 绘制。' },
   pylon: { name: '发动机吊挂', supplier: 'Spirit 威奇托（现属波音）', desc: '把发动机连接到翼盒，内有燃油、电气和液压管路。' },
   gear: { name: '起落架', supplier: '赛峰起落系统（法国，原 Messier-Dowty）', desc: '前起落架和两套四轮主起落架；机轮与碳刹车由赛峰或 Collins 宇航供应。' },
-  doors: { name: '客舱门', supplier: 'Latécoère（法国；2017 年资料）', desc: '4 对 A 型旅客门；该公司 2017 年交付了第 4,000 扇 787 舱门。' },
+  doors: { name: '客舱门', supplier: 'Latécoère（法国；2017 年初资料）', desc: '4 对 A 型旅客门；该公司称第 500 架 787 交付时，它已交付第 4,000 扇 787 旅客门。' },
   cargoDoors: { name: '货舱门', supplier: '萨博（瑞典林雪平）', desc: '前、后大型货舱门和散货舱门；萨博还制造驾驶舱机组逃生门。' },
 };
 
@@ -690,7 +702,7 @@ export const FACTS = [
   '1969 年的 747 结构约 81% 是铝合金，到 787 降到了约 20%。',
   '787 的座舱高度最高为 6,000 ft，比传统客机常见的 8,000 ft 低约 2,000 ft。',
   '787 几乎不用发动机引气：客舱增压、机翼防冰和发动机起动都改用电力。',
-  '787 共有 6 台发电机：每台发动机 2 台 250 kVA，APU 上 2 台 225 kVA。',
+  '787 的电源系统有 6 台主发电机：每台发动机 2 台 250 kVA，APU 上 2 台 225 kVA。',
   '赛峰称 787 是第一种采用电刹车的民航飞机，每个主轮由 4 个电动作动器压紧碳盘。',
   '787 的舷窗约 27×47 cm，没有遮光板，按一下按钮就能让窗户逐渐变暗。',
   '2010 年极限载荷试验中，787 机翼承受 1.5 倍最大预期载荷，翼尖上弯约 7.6 m。',

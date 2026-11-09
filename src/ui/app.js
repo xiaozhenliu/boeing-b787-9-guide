@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import * as KB from '../data/parts.js';
 import { HOTSPOTS } from '../data/hotspots.js';
 import { SYS_PARTS, SYSTEMS_LEGEND } from '../data/systems-kb.js';
+import { CUT } from '../render/materials.js';
 import { TOUR, TOUR_DEFAULTS } from '../data/tour.js';
 import { h, fill } from './dom.js';
 import { Display } from './display.js';
@@ -52,10 +53,15 @@ export function initUI(app) {
 
   // ———————————————— 选择与聚焦 ————————————————
   const meshesOf = (id) => A.parts.get(id) || [];
+  // 选中高亮；第一人称时不叠加（身处驾驶舱/客舱之中，整片高亮只会遮挡视线）
+  function hlSel() {
+    if (state.sel && !state.inside) display.highlight(meshesOf(state.sel).filter((m) => picker.visible(m)), 'selection');
+    else display.clearOverlays('selection');
+  }
   function select(id, { focus = false } = {}) {
     if (!id) { clearSel(); return; }
     state.sel = id;
-    display.highlight(meshesOf(id).filter((m) => picker.visible(m)), 'selection');
+    hlSel();
     panel.showPart(id);
     labels.setSelected(id);
     if (focus) focusPart(id);
@@ -91,7 +97,7 @@ export function initUI(app) {
     const cur = display.state.isolate;
     display.set({ isolate: cur && cur.value === id ? null : { key: 'partId', value: id } });
     picker.refreshSolid();
-    if (state.sel) display.highlight(meshesOf(state.sel).filter((m) => picker.visible(m)), 'selection');
+    hlSel();
   }
 
   // ———————————————— 讲解面板与标注 ————————————————
@@ -125,14 +131,14 @@ export function initUI(app) {
   const modeBtns = {};
   function setMode(id) {
     const m = MODES.find((q) => q.id === id) || MODES[0];
-    if (state.inside) leaveInside();
+    if (state.inside) { leaveInside(); ctx.goPreset('overview'); } // 在舱内切换视图：先回到舱外
     state.mode = m.id;
     display.set({ ...m.display, isolate: null });
     labels.setSet(m.spots);
     panel.setLegend(m.legend || null);
     for (const [k, b] of Object.entries(modeBtns)) b.classList.toggle('on', k === m.id);
     picker.refreshSolid();
-    if (state.sel) display.highlight(meshesOf(state.sel).filter((q) => picker.visible(q)), 'selection');
+    hlSel();
   }
   ctx.setMode = setMode;
 
@@ -141,16 +147,20 @@ export function initUI(app) {
     if (state.inside) return;
     state.inside = true;
     state.saved = { ...display.state };
-    display.set({ cabin: true, cut: 'none', skin: 'solid', explode: 0, systems: false, isolate: null });
+    display.set({ cabin: true, structure: false, cut: 'none', skin: 'solid', explode: 0, systems: false, isolate: null }); // 隔框会穿出内饰板，舱内不显示
+    CUT.inside.value = 1; // 蒙皮背面画成内饰板，并开出风挡窗洞
     labels.setSet('cabin');
+    hlSel();
     document.body.classList.add('inside');
   }
   function leaveInside() {
     if (!state.inside) return;
     state.inside = false;
     const s = state.saved;
-    display.set({ cabin: s.cabin, cut: s.cut, skin: s.skin, explode: s.explode, systems: s.systems });
+    display.set({ cabin: s.cabin, structure: s.structure, cut: s.cut, skin: s.skin, explode: s.explode, systems: s.systems });
+    CUT.inside.value = 0;
     labels.setSet(MODES.find((q) => q.id === state.mode).spots);
+    hlSel();
     document.body.classList.remove('inside');
   }
   rig.onInside = (on) => { if (on) enterInside(); else leaveInside(); };
@@ -164,7 +174,7 @@ export function initUI(app) {
     picker.prebuild();
     picker.refreshSolid();
     ctx.syncFlex?.(v);
-    if (state.sel) display.highlight(meshesOf(state.sel).filter((m) => picker.visible(m)), 'selection');
+    hlSel();
   }
   ctx.setFlex = setFlex;
 

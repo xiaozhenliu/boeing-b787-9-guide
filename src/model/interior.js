@@ -8,13 +8,13 @@ import { WING } from './spec.js';
 import { WingFrame } from './wing.js';
 import { SUPERCRITICAL as AF } from '../geom/airfoil.js';
 import { merge, grid, loftSolid, capPolygon } from '../geom/build.js';
+import { buildFlightDeck } from './flightdeck.js';
 
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const TAU = Math.PI * 2;
 const hb = FUS.zb0;
 export const CABIN_FLOOR = FUS.floor; // 客舱地板面
 export const CARGO_FLOOR = hb + 0.78; // 下货舱地板面（滚棒顶面）
-export const FD_FLOOR = hb + 2.72; // 驾驶舱地板
 
 const secOf = (s) => (SECTIONS.find((q) => s >= q.from && s < q.to) || SECTIONS[SECTIONS.length - 1]).id;
 const _P = V(), _N = V();
@@ -184,7 +184,7 @@ export function buildInterior(M, reg) {
   }
 
   // ———————————————— 客舱 ————————————————
-  const seatE = [], seatB = [], cushion = [], bins = [], mon = [], galley = [], fd = [], fdScreens = [], cargo = [], walls = [];
+  const seatE = [], seatB = [], cushion = [], bins = [], mon = [], galley = [], cargo = [], walls = [];
   // 经济舱座椅（3-3-3）：宽 0.44 m、排距 0.81 m（32 in）
   const ecoSeat = (s, z) => {
     const y = CABIN_FLOOR;
@@ -231,22 +231,6 @@ export function buildInterior(M, reg) {
     [34.7, 34.95, [[0, 1.6]]], [36.05, 36.4, [[-1.9, 1.0], [1.9, 1.0]]], [48.4, 48.95, [[-1.8, 1.2], [1.8, 1.2]]], [50.35, 51.7, [[0, 2.6]]]]) {
     for (const [zc, wz] of zs) galley.push(box((s0 + s1) / 2, CABIN_FLOOR + 1.0, zc, s1 - s0, 2.0, wz));
   }
-  // 驾驶舱：两名飞行员座椅、5 块 15.1 in 大屏 + 平视显示器、中央操纵台、遮光罩、顶板
-  {
-    const y = FD_FLOOR;
-    for (const z of [0.53, -0.53]) {
-      fd.push(box(3.3, y + 0.45, z, 0.55, 0.12, 0.5), box(3.62, y + 0.85, z, 0.12, 0.85, 0.5), box(3.3, y + 0.22, z, 0.3, 0.44, 0.3));
-      fd.push(box(2.75, y + 0.95, z * 1.25, 0.06, 0.06, 0.26)); // 侧杆/驾驶盘（787 为驾驶盘）
-    }
-    fd.push(box(2.5, y + 0.62, 0, 0.75, 0.38, 0.5)); // 中央操纵台（推力手柄）
-    fd.push(box(2.28, y + 0.85, 0, 0.4, 0.75, 2.3)); // 主仪表板
-    fd.push(box(2.18, y + 1.27, 0, 0.32, 0.08, 2.4)); // 遮光罩（MCP）
-    fd.push(box(3.1, y + 2.0, 0, 1.2, 0.08, 0.9)); // 顶板
-    for (const [z, w] of [[-0.92, 0.36], [-0.48, 0.36], [0, 0.36], [0.48, 0.36], [0.92, 0.36]]) fdScreens.push(box(2.07 + 0.01, y + 0.95, z, 0.02, 0.27, w));
-    fdScreens.push(box(2.45, y + 0.75, 0, 0.02, 0.2, 0.3)); // 下中央屏
-    for (const z of [0.53, -0.53]) fdScreens.push(box(2.55, y + 1.48, z, 0.01, 0.2, 0.26)); // HUD 合像器
-    fd.push(box(4.1, y + 1.0, 0, 0.08, 2.0, 2.6)); // 驾驶舱门隔板
-  }
   // 下货舱：前舱 10 排 ×2 = 20 个 LD3，后舱 8 排 ×2 = 16 个 LD3
   const ld3 = (s, sg) => {
     const y = CARGO_FLOOR;
@@ -286,8 +270,11 @@ export function buildInterior(M, reg) {
   cab(mon, M.frameDark, 'ife', 'compOther');
   cab(bins, M.bin, 'bins', 'compSandwich');
   cab(galley, M.galley, 'galleys', 'compAl');
-  cab(fd, M.frameDark, 'flightDeck', 'compOther');
-  cab(fdScreens, M.screen, 'flightDeck', 'compOther');
+  // 驾驶舱：几何见 flightdeck.js，按材质分组注册为同一部件
+  for (const [key, list] of Object.entries(buildFlightDeck())) {
+    const m = cab(list, M[key], 'flightDeck', 'compOther');
+    if (m && (key === 'fdHud' || key === 'fdHudGlass')) { m.castShadow = false; m.receiveShadow = false; }
+  }
   cab(cargo, M.container, 'cargo', 'compAl');
   cab(walls, M.cabinWall, 'cabinWall', 'compSandwich');
   // 客舱地板实体面（座椅模式下可见）
